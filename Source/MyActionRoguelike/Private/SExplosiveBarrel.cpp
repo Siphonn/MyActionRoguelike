@@ -14,7 +14,8 @@ ASExplosiveBarrel::ASExplosiveBarrel()
 	RootComponent = MeshComp;
 	MeshComp->SetCollisionProfileName("PhysicsActor");
 	MeshComp->SetSimulatePhysics(true);
-	
+	MeshComp->bIgnoreRadialForce = true;
+
 	RadialForceComp = CreateDefaultSubobject<URadialForceComponent>("RadialForceComp");
 	RadialForceComp->SetupAttachment(MeshComp);
 	RadialForceComp->Radius = 500.0f;
