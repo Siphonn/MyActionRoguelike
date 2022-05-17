@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "SInteractionComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -70,8 +71,12 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ASCharacter::PrimaryInteract);
+
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+
+	PlayerInputComponent->BindAction("SecondaryAttack", IE_Pressed, this, &ASCharacter::SecondaryAttack);
+	PlayerInputComponent->BindAction("DashAbility", IE_Pressed, this, &ASCharacter::DashAbility);
 }
 
 void ASCharacter::MoveForward(float Value)
@@ -109,9 +114,10 @@ void ASCharacter::PrimaryAttack()
 
 void ASCharacter::PrimaryAttack_Elapsed()
 {
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	if (!ensure(!ProjectileClass)) { return; }
 
-	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
+	FTransform SpawnTM;
+	GetProjectileSpawnTransform(SpawnTM);
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -123,5 +129,79 @@ void ASCharacter::PrimaryAttack_Elapsed()
 void ASCharacter::PrimaryInteract()
 {
 	if (InteractionComp == nullptr) { return; }
+	
 	InteractionComp->PrimaryInteract();
 }
+
+void ASCharacter::SecondaryAttack()
+{
+	PlayAnimMontage(AttackAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_SecondaryAttack, this, &ASCharacter::SecondaryAttack_Elapsed, 0.2f);
+}
+
+void ASCharacter::SecondaryAttack_Elapsed()
+{
+	if (!ensure(BlackHoleClass)) { return; }
+	
+	FTransform SpawnTM;
+	GetProjectileSpawnTransform(SpawnTM);
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParams.Instigator = this;
+
+	GetWorld()->SpawnActor<AActor>(BlackHoleClass, SpawnTM, SpawnParams);
+}
+
+void ASCharacter::DashAbility()
+{
+	PlayAnimMontage(AttackAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_DashAbility, this, &ASCharacter::DashAbility_Elapsed, 0.2f);
+}
+
+void ASCharacter::DashAbility_Elapsed()
+{
+	if (!ensure(DashClass)) { return; }
+	
+	FTransform SpawnTM;
+	GetProjectileSpawnTransform(SpawnTM);
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParams.Instigator = this;
+
+	GetWorld()->SpawnActor<AActor>(DashClass, SpawnTM, SpawnParams);
+}
+
+void ASCharacter::GetProjectileSpawnTransform(FTransform& SpawnTM) const
+{
+	FCollisionObjectQueryParams ObjectQueryParams;
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
+
+	FVector CameraLocation = CameraComp->GetComponentLocation();;
+	FRotator CameraRotation = CameraComp->GetComponentRotation();
+	FVector CameraEnd = CameraLocation + (CameraRotation.Vector() * 10000.0f);
+
+	FHitResult Hit;
+	bool bHasHit = GetWorld()->LineTraceSingleByObjectType(Hit, CameraLocation, CameraEnd, ObjectQueryParams);
+
+	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	FVector EndLocation = (bHasHit ? Hit.Location : CameraEnd);
+	FRotator FireRotation = UKismetMathLibrary::FindLookAtRotation(HandLocation, EndLocation);
+
+	SpawnTM = FTransform(FireRotation, HandLocation);
+}
+
+
+/// Debug LineTrace from camera
+// 	UE_LOG(LogTemp, Warning, TEXT("LineTrace Hit! %s was the actor Hit!!"), *GetNameSafe(Hit.GetActor()));
+// 	DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 30, 32, FColor::Blue, false, 2.0f);
+
+
+/// UKismetMathLibrary::FindLookAtRotation(HandLocation, EndLocation);
+/// OR
+/// FVector LocationDiff = EndLocation - HandLocation;
+/// FRotator LooKAtRotation = TestLoc.Rotation();

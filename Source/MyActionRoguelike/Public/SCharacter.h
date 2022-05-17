@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SInteractionComponent.h"
+#include "SProjectile.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -21,11 +22,17 @@ class MYACTIONROGUELIKE_API ASCharacter : public ACharacter
 
 protected:
 	UPROPERTY(EditAnywhere, Category="Attack")
-	TSubclassOf<AActor> ProjectileClass;
+	TSubclassOf<ASProjectile> ProjectileClass;
+	UPROPERTY(EditAnywhere, Category= "Attack")
+	TSubclassOf<ASProjectile> BlackHoleClass;
+	UPROPERTY(EditAnywhere, Category="Attack")
+	TSubclassOf<ASProjectile> DashClass;
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	UAnimMontage* AttackAnim;
-	
+
 	FTimerHandle TimerHandle_PrimaryAttack;
+	FTimerHandle TimerHandle_SecondaryAttack;
+	FTimerHandle TimerHandle_DashAbility;
 
 public:
 	// Sets default values for this character's properties
@@ -47,6 +54,13 @@ protected:
 	void PrimaryAttack();
 	void PrimaryAttack_Elapsed();
 	void PrimaryInteract();
+	void SecondaryAttack();
+	void SecondaryAttack_Elapsed();
+	void DashAbility();
+	void DashAbility_Elapsed();
+
+private:
+	void GetProjectileSpawnTransform(FTransform& SpawnTM) const;
 
 public:
 	// Called every frame
@@ -54,4 +68,5 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
 };

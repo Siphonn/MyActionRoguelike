@@ -25,15 +25,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	URadialForceComponent* RadialForceComp;
 
+	virtual void PostInitializeComponents() override;
+
+	/// must be marked with ufuntion in order to 'bind' the event
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
-
-	//UPrimitiveComponent*, HitComponent, AActor*, OtherActor, UPrimitiveComponent*, OtherComp, FVector, NormalImpulse, const FHitResult&, Hit 
-	
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 };
