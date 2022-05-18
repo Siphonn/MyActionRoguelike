@@ -14,6 +14,7 @@ class UCameraComponent;
 class USpringArmComponent;
 class USInteractionComponent;
 class UAnimMontage;
+class USAttributeComponent;
 
 UCLASS()
 class MYACTIONROGUELIKE_API ASCharacter : public ACharacter
@@ -45,6 +46,8 @@ protected:
 	USpringArmComponent* SpringArmComp;
 	UPROPERTY(VisibleAnywhere)
 	USInteractionComponent* InteractionComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Componets")
+	USAttributeComponent* AttributeComp;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -68,5 +71,4 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
 };

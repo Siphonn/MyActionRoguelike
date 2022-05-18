@@ -6,8 +6,9 @@
 #include "DrawDebugHelpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "SInteractionComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "SAttributeComponent.h"
+#include "SInteractionComponent.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -23,6 +24,8 @@ ASCharacter::ASCharacter()
 	CameraComp->SetupAttachment(SpringArmComp);
 
 	InteractionComp = CreateDefaultSubobject<USInteractionComponent>("InteractionComp");
+
+	AttributeComp = CreateDefaultSubobject<USAttributeComponent>("AttributeComp");
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
@@ -114,7 +117,7 @@ void ASCharacter::PrimaryAttack()
 
 void ASCharacter::PrimaryAttack_Elapsed()
 {
-	if (!ensure(!ProjectileClass)) { return; }
+	if (!ensure(ProjectileClass)) { return; }
 
 	FTransform SpawnTM;
 	GetProjectileSpawnTransform(SpawnTM);
