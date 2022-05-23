@@ -2,54 +2,53 @@
 
 
 #include "SDashProjectile.h"
-
 #include "SCharacter.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 
 ASDashProjectile::ASDashProjectile()
 {
-	ExplodeEffectComp = CreateDefaultSubobject<UParticleSystemComponent>("ExplodeEffect");
-	ExplodeEffectComp->SetupAttachment(SphereComp);
-	ExplodeEffectComp->SetAutoActivate(false);
+	TeleportDelay = 0.2f;
+	DetonateDelay = 0.2f;
+
+	MovementComp->InitialSpeed = 6000.0f;
 }
 
 void ASDashProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InstigatorPawn = GetInstigator();
-
-	SphereComp->IgnoreActorWhenMoving(InstigatorPawn, true);
-
-	GetWorldTimerManager().SetTimer(TimerHandle_Teleport, this, &ASDashProjectile::DashExplosion_Delay, 0.5f);
+	GetWorldTimerManager().SetTimer(TimerHandle_DelayDetonate, this, &ASDashProjectile::Explode, DetonateDelay);
 }
 
-void ASDashProjectile::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp,
-                                 bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse,
-                                 const FHitResult& Hit)
+void ASDashProjectile::Explode_Implementation()
 {
-	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
+	/// skip base implementation as it will destroy actor (we need to stay alive a bit longer to finish the 2nd timer)
+	//Super::Explode_Implementation();
 
-	//UE_LOG(LogTemp, Warning, TEXT("HIT!!!"));
-	DashExplosion_Delay();
+	/// Clear timer if the Explode was already called through another source like OnActorHit
+	GetWorldTimerManager().ClearTimer(TimerHandle_DelayDetonate);
+
+	UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());
+
+	EffectComp->DeactivateSystem();
+
+	MovementComp->StopMovementImmediately();
+	SetActorEnableCollision(false);
+
+	FTimerHandle TimerHandle_DelayTeleport;
+	GetWorldTimerManager().SetTimer(TimerHandle_DelayTeleport, this, &ASDashProjectile::TeleportInstigator,
+	                                TeleportDelay);
 }
 
-void ASDashProjectile::DashExplosion_Delay()
+void ASDashProjectile::TeleportInstigator()
 {
-	EffectComp->Deactivate();
-	ExplodeEffectComp->Activate();
-	MovementComp->Velocity = FVector(0.0f, 0.0f, 0.0f);
+	AActor* ActorToTeleport = GetInstigator();
 
-	GetWorldTimerManager().SetTimer(TimerHandle_Teleport, this, &ASDashProjectile::Teleport_Delay, 0.2f);
-}
-
-void ASDashProjectile::Teleport_Delay()
-{
-	InstigatorPawn->TeleportTo(GetActorLocation(), InstigatorPawn->GetActorRotation(), true, false);
-	ASCharacter* PlayerCharacter = Cast<ASCharacter>(InstigatorPawn);
-	PlayerCharacter->GetMovementComponent()->Velocity = FVector(0, 0, 0);
-	PlayerCharacter->Jump();
-
-	Destroy();
+	if (ensure(ActorToTeleport))
+	{
+		/// Keep instigator rotation or it may end up jarring
+		ActorToTeleport->TeleportTo(GetActorLocation(), ActorToTeleport->GetActorRotation(), false, false);
+	}
 }

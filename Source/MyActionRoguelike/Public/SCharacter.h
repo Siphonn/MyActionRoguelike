@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SInteractionComponent.h"
-#include "SProjectile.h"
+#include "SProjectileBase.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -23,11 +23,11 @@ class MYACTIONROGUELIKE_API ASCharacter : public ACharacter
 
 protected:
 	UPROPERTY(EditAnywhere, Category="Attack")
-	TSubclassOf<ASProjectile> ProjectileClass;
+	TSubclassOf<ASProjectileBase> ProjectileClass;
 	UPROPERTY(EditAnywhere, Category= "Attack")
-	TSubclassOf<ASProjectile> BlackHoleClass;
+	TSubclassOf<ASProjectileBase> BlackHoleClass;
 	UPROPERTY(EditAnywhere, Category="Attack")
-	TSubclassOf<ASProjectile> DashClass;
+	TSubclassOf<ASProjectileBase> DashClass;
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	UAnimMontage* AttackAnim;
 
@@ -56,14 +56,15 @@ protected:
 	void MoveRight(float Value);
 	void PrimaryAttack();
 	void PrimaryAttack_Elapsed();
-	void PrimaryInteract();
 	void SecondaryAttack();
 	void SecondaryAttack_Elapsed();
 	void DashAbility();
 	void DashAbility_Elapsed();
+	void PrimaryInteract();
 
 private:
-	void GetProjectileSpawnTransform(FTransform& SpawnTM) const;
+	void SpawnProjectile(TSubclassOf<AActor> ClassToSpawn);
+	//void GetProjectileSpawnTransform(FTransform& SpawnTM) const;
 
 public:
 	// Called every frame

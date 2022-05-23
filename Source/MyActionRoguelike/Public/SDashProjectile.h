@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMagicProjectile.h"
+#include "SProjectileBase.h"
 #include "SDashProjectile.generated.h"
 
 UCLASS()
-class MYACTIONROGUELIKE_API ASDashProjectile : public ASProjectile
+class MYACTIONROGUELIKE_API ASDashProjectile : public ASProjectileBase
 {
 	GENERATED_BODY()
 
@@ -15,21 +15,18 @@ public:
 	ASDashProjectile();
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UParticleSystemComponent* ExplodeEffectComp;
-	// UPROPERTY(EditAnywhere, Category = "Projectile")
-	// UAnimMontage* FallAnim;
+	UPROPERTY(EditDefaultsOnly, Category="Teleport")
+	float TeleportDelay;
+	UPROPERTY(EditDefaultsOnly, Category="Teleport")
+	float DetonateDelay;
 
-	FTimerHandle TimerHandle_Teleport;
-	FTimerHandle TimerHandle_Destroy;
+	// Handle to cancel timer if we already hit something
+	FTimerHandle TimerHandle_DelayDetonate;
+
+	// Base class using BlueprintNativeEvent, we must override the _Implementation not the Explode()
+	virtual void Explode_Implementation() override;
+
+	void TeleportInstigator();
 
 	virtual void BeginPlay() override;
-
-	virtual void NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
-
-	void DashExplosion_Delay();
-	void Teleport_Delay();
-
-private:
-	APawn* InstigatorPawn;
 };
