@@ -49,9 +49,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Componets")
 	USAttributeComponent* AttributeComp;
 
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 	void PrimaryAttack();
@@ -61,6 +58,12 @@ protected:
 	void DashAbility();
 	void DashAbility_Elapsed();
 	void PrimaryInteract();
+
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
+						 OwningComp, float NewHealth, float Delta);
+
+	virtual void PostInitializeComponents() override;
 
 private:
 	void SpawnProjectile(TSubclassOf<AActor> ClassToSpawn);
