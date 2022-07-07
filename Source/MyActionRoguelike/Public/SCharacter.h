@@ -45,9 +45,15 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComp;
 	UPROPERTY(VisibleAnywhere)
+	UParticleSystemComponent* MuzzleFlashComp;
+	UPROPERTY(VisibleAnywhere)
 	USInteractionComponent* InteractionComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Componets")
 	USAttributeComponent* AttributeComp;
+	UPROPERTY(EditAnywhere, Category="Hit")
+	float HitFadeSpeed = 4.0f;
+	UPROPERTY(EditAnywhere, Category="Hit")
+	FColor FadeColour = FColor::Red;
 
 	void MoveForward(float Value);
 	void MoveRight(float Value);

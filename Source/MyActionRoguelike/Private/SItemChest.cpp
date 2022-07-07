@@ -18,18 +18,6 @@ ASItemChest::ASItemChest()
 	TargetPitch = 110.0f;
 }
 
-// Called when the game starts or when spawned
-void ASItemChest::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-// Called every frame
-void ASItemChest::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
 void ASItemChest::Interact_Implementation(APawn* InstigatorPawn)
 {
 	//ISGameplayInterface::Interact_Implementation(InstigatorPawn);

@@ -7,8 +7,10 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "SAttributeComponent.h"
 #include "SInteractionComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -22,6 +24,12 @@ ASCharacter::ASCharacter()
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComp->SetupAttachment(SpringArmComp);
+
+	MuzzleFlashComp = CreateDefaultSubobject<UParticleSystemComponent>("MuzzleFlashComp");
+	MuzzleFlashComp->bAutoManageAttachment = true;
+	MuzzleFlashComp->SetAutoAttachmentParameters(RootComponent, FName("Muzzle_01"), EAttachmentRule::KeepRelative,
+	                                             EAttachmentRule::KeepRelative, EAttachmentRule::KeepRelative);
+	MuzzleFlashComp->SetAutoActivate(false);
 
 	InteractionComp = CreateDefaultSubobject<USInteractionComponent>("InteractionComp");
 
@@ -119,6 +127,8 @@ void ASCharacter::PrimaryAttack()
 void ASCharacter::PrimaryAttack_Elapsed()
 {
 	SpawnProjectile(ProjectileClass);
+
+	MuzzleFlashComp->Activate();
 }
 
 void ASCharacter::SecondaryAttack()
@@ -147,45 +157,46 @@ void ASCharacter::DashAbility_Elapsed()
 
 void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
 {
-	if (!ensureAlways(ClassToSpawn)) { return; }
-
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParams.Instigator = this;
-
-	FCollisionShape Shape;
-	Shape.SetSphere(20.0f);
-
-	/// Ignore player
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(this);
-
-	FCollisionObjectQueryParams ObjectQueryParams;
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn);
-
-	FVector TraceStart = CameraComp->GetComponentLocation();
-
-	/// endpoint far into the look-at distance (not too far, still adjust somewhat towards crosshair on a miss)
-	FVector TraceEnd = CameraComp->GetComponentLocation() + (GetControlRotation().Vector() * 5000.0f);
-
-	FHitResult Hit;
-	/// returnss true if we got to blocking hit
-	if (GetWorld()->SweepSingleByObjectType(Hit, TraceStart, TraceEnd, FQuat::Identity, ObjectQueryParams, Shape,
-	                                        Params))
+	if (ensure(ClassToSpawn))
 	{
-		/// Overwrite trace end with impact point in world
-		TraceEnd = Hit.ImpactPoint;
+		FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		SpawnParams.Instigator = this;
+
+		FCollisionShape Shape;
+		Shape.SetSphere(20.0f);
+
+		/// Ignore player
+		FCollisionQueryParams Params;
+		Params.AddIgnoredActor(this);
+
+		FCollisionObjectQueryParams ObjectQueryParams;
+		ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+		ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
+		ObjectQueryParams.AddObjectTypesToQuery(ECC_Pawn);
+
+		FVector TraceStart = CameraComp->GetComponentLocation();
+
+		/// endpoint far into the look-at distance (not too far, still adjust somewhat towards crosshair on a miss)
+		FVector TraceEnd = CameraComp->GetComponentLocation() + (GetControlRotation().Vector() * 5000.0f);
+
+		FHitResult Hit;
+		/// returnss true if we got to blocking hit
+		if (GetWorld()->SweepSingleByObjectType(Hit, TraceStart, TraceEnd, FQuat::Identity, ObjectQueryParams, Shape,
+		                                        Params))
+		{
+			/// Overwrite trace end with impact point in world
+			TraceEnd = Hit.ImpactPoint;
+		}
+
+		/// find new direction/rotation from Hand pointing to impact point in world
+		FRotator ProjectRotation = FRotationMatrix::MakeFromX(TraceEnd - HandLocation).Rotator();
+
+		FTransform SpawnTM = FTransform(ProjectRotation, HandLocation);
+		GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTM, SpawnParams);
 	}
-
-	/// find new direction/rotation from Hand pointing to impact point in world
-	FRotator ProjectRotation = FRotationMatrix::MakeFromX(TraceEnd - HandLocation).Rotator();
-
-	FTransform SpawnTM = FTransform(ProjectRotation, HandLocation);
-	GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTM, SpawnParams);
 }
 
 void ASCharacter::PrimaryInteract()
@@ -197,12 +208,18 @@ void ASCharacter::PrimaryInteract()
 }
 
 void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth,
-	float Delta)
+                                  float Delta)
 {
 	if (NewHealth <= 0.0f && Delta < 0.0f)
 	{
 		APlayerController* PC = Cast<APlayerController>(GetController());
 		DisableInput(PC);
+	}
+	else
+	{
+		GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);
+		GetMesh()->SetScalarParameterValueOnMaterials("HitFlashSpeed", HitFadeSpeed);
+		GetMesh()->SetVectorParameterValueOnMaterials("Hit Colour", FVector(FadeColour));
 	}
 }
 

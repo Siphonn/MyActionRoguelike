@@ -3,6 +3,7 @@
 
 #include "SMagicProjectile.h"
 #include "SAttributeComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 ASMagicProjectile::ASMagicProjectile()
@@ -12,7 +13,10 @@ ASMagicProjectile::ASMagicProjectile()
 void ASMagicProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
 	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ASMagicProjectile::OnActorOverlap);
+	SphereComp->OnComponentHit.AddDynamic(this, &ASMagicProjectile::OnActorHit);
 }
 
 void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -26,6 +30,23 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 		if (AttributeComp)
 		{
 			AttributeComp->ApplyHealthChange(-20.0f);
+			//UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSFX, GetActorLocation());
+
+			Destroy();
+		}
+	}
+}
+
+void ASMagicProjectile::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+                                   UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	if (OtherActor != GetInstigator())
+	{
+		if (ensure(ImpactVFX) && ensure(ImpactSFX))
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactVFX, GetActorLocation());
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSFX, GetActorLocation());
+			UGameplayStatics::PlayWorldCameraShake(GetWorld(), CameraShake, Hit.Location, 500.0f, 1500.0f, 1.0f, false);
 
 			Destroy();
 		}
