@@ -25,12 +25,6 @@ ASCharacter::ASCharacter()
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComp->SetupAttachment(SpringArmComp);
 
-	MuzzleFlashComp = CreateDefaultSubobject<UParticleSystemComponent>("MuzzleFlashComp");
-	MuzzleFlashComp->bAutoManageAttachment = true;
-	MuzzleFlashComp->SetAutoAttachmentParameters(RootComponent, FName("Muzzle_01"), EAttachmentRule::KeepRelative,
-	                                             EAttachmentRule::KeepRelative, EAttachmentRule::KeepRelative);
-	MuzzleFlashComp->SetAutoActivate(false);
-
 	InteractionComp = CreateDefaultSubobject<USInteractionComponent>("InteractionComp");
 
 	AttributeComp = CreateDefaultSubobject<USAttributeComponent>("AttributeComp");
@@ -128,7 +122,7 @@ void ASCharacter::PrimaryAttack_Elapsed()
 {
 	SpawnProjectile(ProjectileClass);
 
-	MuzzleFlashComp->Activate();
+	UGameplayStatics::SpawnEmitterAttached(MuzzleFlashEffect, GetMesh(), FName("Muzzle_01"));
 }
 
 void ASCharacter::SecondaryAttack()

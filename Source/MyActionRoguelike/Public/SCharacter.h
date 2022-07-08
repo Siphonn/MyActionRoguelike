@@ -30,6 +30,8 @@ protected:
 	TSubclassOf<ASProjectileBase> DashClass;
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	UAnimMontage* AttackAnim;
+	UPROPERTY(EditAnywhere, Category="Attack")
+	TObjectPtr<UParticleSystem> MuzzleFlashEffect;
 
 	FTimerHandle TimerHandle_PrimaryAttack;
 	FTimerHandle TimerHandle_SecondaryAttack;
@@ -44,8 +46,6 @@ protected:
 	UCameraComponent* CameraComp;
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComp;
-	UPROPERTY(VisibleAnywhere)
-	UParticleSystemComponent* MuzzleFlashComp;
 	UPROPERTY(VisibleAnywhere)
 	USInteractionComponent* InteractionComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Componets")
