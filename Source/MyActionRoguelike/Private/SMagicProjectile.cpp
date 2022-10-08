@@ -16,7 +16,7 @@ void ASMagicProjectile::BeginPlay()
 
 	SphereComp->IgnoreActorWhenMoving(GetInstigator(), true);
 	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ASMagicProjectile::OnActorOverlap);
-	SphereComp->OnComponentHit.AddDynamic(this, &ASMagicProjectile::OnActorHit);
+	//SphereComp->OnComponentHit.AddDynamic(this, &ASMagicProjectile::OnActorHit);
 }
 
 void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -30,7 +30,7 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 		if (AttributeComp)
 		{
 			AttributeComp->ApplyHealthChange(-20.0f);
-			//UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSFX, GetActorLocation());
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSFX, GetActorLocation());
 
 			Destroy();
 		}
