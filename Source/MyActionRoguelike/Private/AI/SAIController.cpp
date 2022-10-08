@@ -11,13 +11,18 @@ void ASAIController::BeginPlay()
 	Super::BeginPlay();
 
 	RunBehaviorTree(BehaviorTree);
-
-	APawn* MyPawn = UGameplayStatics::GetPlayerPawn(this, 0);
-
-	if(MyPawn)
-	{
-		GetBlackboardComponent()->SetValueAsVector("MoveToLocation", MyPawn->GetActorLocation());
-
-		GetBlackboardComponent()->SetValueAsObject("TargetActor", MyPawn);
-	}
 }
+
+
+/*
+//----------------OLD CODE--------------//
+/// REMOVED. OnPawnSeen method used in AICharacter to previde player pawn
+// APawn* MyPawn = UGameplayStatics::GetPlayerPawn(this, 0);
+//
+// if(MyPawn)
+// {
+// 	GetBlackboardComponent()->SetValueAsVector("MoveToLocation", MyPawn->GetActorLocation());
+//
+// 	GetBlackboardComponent()->SetValueAsObject("TargetActor", MyPawn);
+// }
+*/
