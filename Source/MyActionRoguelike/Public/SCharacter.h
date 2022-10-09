@@ -22,6 +22,11 @@ class MYACTIONROGUELIKE_API ASCharacter : public ACharacter
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(VisibleAnywhere, Category="Effects")
+	FName TimeToHitParamName;
+	UPROPERTY(VisibleAnywhere, Category="Effects")
+	FName HandSocketName;
+	
 	UPROPERTY(EditAnywhere, Category="Attack")
 	TSubclassOf<ASProjectileBase> ProjectileClass;
 	UPROPERTY(EditAnywhere, Category= "Attack")

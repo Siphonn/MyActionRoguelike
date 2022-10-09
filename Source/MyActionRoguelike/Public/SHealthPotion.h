@@ -3,19 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SGameplayInterface.h"
-#include "GameFramework/Actor.h"
+#include "SPowerUpBase.h"
 #include "SHealthPotion.generated.h"
 
 class UStaticMeshComponent;
 
 UCLASS()
-class MYACTIONROGUELIKE_API ASHealthPotion : public AActor, public ISGameplayInterface
+class MYACTIONROGUELIKE_API ASHealthPotion : public ASPowerUpBase
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
 	ASHealthPotion();
 
 	void Interact_Implementation(APawn* InstigatorPawn) override;
@@ -23,8 +21,4 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* BottleMesh;
-
-	FTimerHandle TimerHandle_ActivatePotion;
-
-	void ActivatePotion_Elapsed();
 };

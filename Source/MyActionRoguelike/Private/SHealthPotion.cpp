@@ -4,37 +4,31 @@
 #include "SHealthPotion.h"
 #include "SAttributeComponent.h"
 
-// Sets default values
+
 ASHealthPotion::ASHealthPotion()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
 	BottleMesh = CreateDefaultSubobject<UStaticMeshComponent>("BottleMesh");
-	RootComponent = BottleMesh;
+	// Disable collision, instead we use SphereComp to handle interaction queries
+	BottleMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	BottleMesh->SetupAttachment(RootComponent);
 }
 
 void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 {
-	// ISGameplayInterface::Interact_Implementation(InstigatorPawn);
-
+	if(!ensure(InstigatorPawn))
+	{
+		return;
+	}
+	
 	USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(
 		InstigatorPawn->GetComponentByClass(USAttributeComponent::StaticClass()));
-	if (AttributeComp && !IsHidden())
+	/// Check if not already at max health
+	if (ensure(AttributeComp) && !AttributeComp->IsFullHealth())
 	{
-		if (AttributeComp->GetHealth() < 100.0f)
-
-			AttributeComp->ApplyHealthChange(50.0f);
-
-		SetActorHiddenInGame(true);
-
-		GetWorldTimerManager().SetTimer(TimerHandle_ActivatePotion, this, &ASHealthPotion::ActivatePotion_Elapsed,
-		                                10.0f);
+		/// only activate if healed successfully
+		if(AttributeComp->ApplyHealthChange(AttributeComp->GetMaxHealth()))
+		{
+			HideAndCooldownPowerUp();
+		}
 	}
-}
-
-void ASHealthPotion::ActivatePotion_Elapsed()
-{
-	SetActorHiddenInGame(false);
-	// Reenable once timer is up
 }

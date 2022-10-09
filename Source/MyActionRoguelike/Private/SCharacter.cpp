@@ -218,6 +218,7 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
 }
 
 
+/*------------------OLD CODE-------------------------//
 // void ASCharacter::GetProjectileSpawnTransform(FTransform& SpawnTM) const
 // {
 // 	FCollisionObjectQueryParams ObjectQueryParams;
@@ -260,3 +261,4 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
 // SpawnParams.Instigator = this;
 //
 // GetWorld()->SpawnActor<AActor>(BlackHoleClass, SpawnTM, SpawnParams);
+*/
