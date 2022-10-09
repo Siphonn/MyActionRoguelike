@@ -23,3 +23,6 @@
 *.suo
 *.xcodeproj
 *.xcworkspace
+
+# Plugins folder - current plugin is RiderLink
+/[Pp]lugins/
