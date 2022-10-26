@@ -31,4 +31,6 @@ protected:
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Sounds")
 	USoundCue* ImpactSFX;
+	UPROPERTY(EditAnywhere, Category="Magic Projectile")
+	float DamageAmount = 20.0f;
 };
