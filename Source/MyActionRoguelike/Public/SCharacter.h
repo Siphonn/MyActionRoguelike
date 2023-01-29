@@ -59,6 +59,8 @@ protected:
 	float HitFadeSpeed = 4.0f;
 	UPROPERTY(EditAnywhere, Category="Hit")
 	FColor FadeColour = FColor::Red;
+	UPROPERTY(VisibleAnywhere, Category="Effects")
+	FName TimeToHitParam;
 
 	void MoveForward(float Value);
 	void MoveRight(float Value);

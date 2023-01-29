@@ -30,6 +30,8 @@ ASCharacter::ASCharacter()
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationYaw = false;
+
+	TimeToHitParam = "TimeToHit";
 }
 
 void ASCharacter::PostInitializeComponents()
@@ -202,16 +204,17 @@ void ASCharacter::PrimaryInteract()
 void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth,
                                   float Delta)
 {
+	if(Delta < 0.0f)
+	{
+		GetMesh()->SetScalarParameterValueOnMaterials(TimeToHitParam, GetWorld()->TimeSeconds);
+		GetMesh()->SetScalarParameterValueOnMaterials("HitFlashSpeed", HitFadeSpeed);
+		GetMesh()->SetVectorParameterValueOnMaterials("Hit Colour", FVector(FadeColour));
+	}
+	
 	if (NewHealth <= 0.0f && Delta < 0.0f)
 	{
 		APlayerController* PC = Cast<APlayerController>(GetController());
 		DisableInput(PC);
-	}
-	else
-	{
-		GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);
-		GetMesh()->SetScalarParameterValueOnMaterials("HitFlashSpeed", HitFadeSpeed);
-		GetMesh()->SetVectorParameterValueOnMaterials("Hit Colour", FVector(FadeColour));
 	}
 }
 

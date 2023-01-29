@@ -7,8 +7,7 @@
 #include "SAttributeComponent.generated.h"
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnHealthChanged, AActor*, InstigatorActor, USAttributeComponent*,
-                                            OwningComp, float, NewHealth, float, Delta);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnHealthChanged, AActor*, InstigatorActor, USAttributeComponent*, OwningComp, float, NewHealth, float, Delta);
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -17,8 +16,12 @@ class MYACTIONROGUELIKE_API USAttributeComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this component's properties
 	USAttributeComponent();
+
+	UFUNCTION(BlueprintCallable, Category="Attributes")
+	static USAttributeComponent* GetAttributes(AActor* FromActor);
+	UFUNCTION(BlueprintCallable, Category="Attributes", meta = (DisplayName = "IsAlive"))
+	static bool IsActorAlive(AActor* Actor);
 
 protected:
 	/// EditAnywhere - edit in BP editor and per-instance in level.
@@ -49,10 +52,10 @@ public:
 	float GetMaxHealth() const;
 	UFUNCTION()
 	float GetHealth() const;
-	
+
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;
-	
+
 	UFUNCTION(BlueprintCallable, Category="Attributes")
 	bool ApplyHealthChange(AActor* InstigatorActor, float Delta);
 };

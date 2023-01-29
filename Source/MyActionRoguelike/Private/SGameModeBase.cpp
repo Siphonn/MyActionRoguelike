@@ -17,8 +17,7 @@ void ASGameModeBase::StartPlay()
 
 	// Continuously timer to spawns more bots
 	// Actual amount of bots and whether its allowed to spawn determined by spawn logic later in chain.....
-	GetWorldTimerManager().SetTimer(TimerHandle_SpawnBots, this, &ASGameModeBase::SpawnBotTimerElapsed,
-	                                SpawnTimerInterval, true);
+	GetWorldTimerManager().SetTimer(TimerHandle_SpawnBots, this, &ASGameModeBase::SpawnBotTimerElapsed, SpawnTimerInterval, true);
 }
 
 void ASGameModeBase::SpawnBotTimerElapsed()
@@ -28,8 +27,7 @@ void ASGameModeBase::SpawnBotTimerElapsed()
 	{
 		ASAICharacter* Bot = *It;
 
-		USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(
-			Bot->GetComponentByClass(USAttributeComponent::StaticClass()));
+		USAttributeComponent* AttributeComp = USAttributeComponent::GetAttributes(Bot);
 		if (ensure(AttributeComp) && AttributeComp->IsAlive())
 		{
 			NumberOfALiveBots++;
@@ -50,16 +48,14 @@ void ASGameModeBase::SpawnBotTimerElapsed()
 		return;
 	}
 
-	UEnvQueryInstanceBlueprintWrapper* QueryInstance = UEnvQueryManager::RunEQSQuery(
-		this, SpawnBotQuery, this, EEnvQueryRunMode::RandomBest5Pct, nullptr);
+	UEnvQueryInstanceBlueprintWrapper* QueryInstance = UEnvQueryManager::RunEQSQuery(this, SpawnBotQuery, this, EEnvQueryRunMode::RandomBest5Pct, nullptr);
 	if (ensure(QueryInstance))
 	{
 		QueryInstance->GetOnQueryFinishedEvent().AddDynamic(this, &ASGameModeBase::OnQueryCompleted);
 	}
 }
 
-void ASGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance,
-                                      EEnvQueryStatus::Type QueryStatus)
+void ASGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus)
 {
 	if (QueryStatus != EEnvQueryStatus::Success)
 	{

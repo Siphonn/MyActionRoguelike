@@ -24,6 +24,8 @@ protected:
 	UPawnSensingComponent* PawnSensingComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	USAttributeComponent* AttributeComp;
+	UPROPERTY(VisibleAnywhere, Category="Effects")
+	FName TimeToHitParam;
 
 	UFUNCTION()
 	void SetTargetActor(AActor* NewTarget);

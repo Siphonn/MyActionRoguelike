@@ -12,8 +12,8 @@ ASAICharacter::ASAICharacter()
 {
 	PawnSensingComp = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComp");
 	AttributeComp = CreateDefaultSubobject<USAttributeComponent>("AttributeComp");
-
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	TimeToHitParam = "TimeToHit";
 }
 
 void ASAICharacter::PostInitializeComponents()
@@ -50,6 +50,8 @@ void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponen
 		{
 			SetTargetActor(InstigatorActor);
 		}
+
+		GetMesh()->SetScalarParameterValueOnMaterials(TimeToHitParam, GetWorld()->TimeSeconds);
 
 		if (NewHealth <= 0.0f)
 		{

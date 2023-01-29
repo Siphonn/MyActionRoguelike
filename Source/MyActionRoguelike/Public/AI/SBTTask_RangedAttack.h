@@ -14,7 +14,13 @@ class MYACTIONROGUELIKE_API USBTTask_RangedAttack : public UBTTaskNode
 {
 	GENERATED_BODY()
 
+public:
+	USBTTask_RangedAttack();
+	
 protected:
+	UPROPERTY(EditAnywhere, Category="AI")
+	float MaxBulletSpread;
+	
 	UPROPERTY(EditAnywhere, Category="AI")
 	TSubclassOf<AActor> ProjectileClass;
 
