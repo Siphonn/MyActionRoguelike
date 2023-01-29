@@ -29,7 +29,7 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 			OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
 		if (AttributeComp)
 		{
-			AttributeComp->ApplyHealthChange(-DamageAmount);
+			AttributeComp->ApplyHealthChange(GetInstigator(), -DamageAmount);
 			UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSFX, GetActorLocation());
 
 			Destroy();

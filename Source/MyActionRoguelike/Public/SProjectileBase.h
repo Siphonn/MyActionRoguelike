@@ -35,6 +35,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	UParticleSystemComponent* EffectComp;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	UAudioComponent* AudioComp;
+
 	/// 'virtual' so we can override this child-class 
 	UFUNCTION()
 	virtual void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,

@@ -18,7 +18,7 @@ EBTNodeResult::Type USBTTask_Heal::ExecuteTask(UBehaviorTreeComponent& OwnerComp
 		{
 			return EBTNodeResult::Failed;
 		}
-		AttributeComp->ApplyHealthChange(AttributeComp->GetMaxHealth());
+		AttributeComp->ApplyHealthChange(AIPawn, AttributeComp->GetMaxHealth());
 		return EBTNodeResult::Succeeded;
 	}
 	return EBTNodeResult::Failed;

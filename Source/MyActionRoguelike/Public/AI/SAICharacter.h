@@ -26,5 +26,10 @@ protected:
 	USAttributeComponent* AttributeComp;
 
 	UFUNCTION()
+	void SetTargetActor(AActor* NewTarget);
+	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
+						 OwningComp, float NewHealth, float Delta);
 };
