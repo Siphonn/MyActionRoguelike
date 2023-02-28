@@ -3,11 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SAttributeComponent.h"
 #include "GameFramework/Character.h"
+#include "SAttributeComponent.h"
+#include "SWorldUserWidget.h"
 #include "SAICharacter.generated.h"
 
 class UPawnSensingComponent;
+class USWorldUserWidget;
+class UUserWidget;
 
 UCLASS()
 class MYACTIONROGUELIKE_API ASAICharacter : public ACharacter
@@ -26,6 +29,10 @@ protected:
 	USAttributeComponent* AttributeComp;
 	UPROPERTY(VisibleAnywhere, Category="Effects")
 	FName TimeToHitParam;
+	UPROPERTY(EditDefaultsOnly, Category="UI")
+	TSubclassOf<UUserWidget> HealthBarWidgetClass;
+	UPROPERTY(EditDefaultsOnly, Category="UI")
+	USWorldUserWidget* ActiveHealthBar;
 
 	UFUNCTION()
 	void SetTargetActor(AActor* NewTarget);
