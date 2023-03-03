@@ -52,6 +52,8 @@ public:
 	float GetMaxHealth() const;
 	UFUNCTION()
 	float GetHealth() const;
+	UFUNCTION(BlueprintCallable)
+	bool Kill(AActor* InstigatorActor);
 
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;
