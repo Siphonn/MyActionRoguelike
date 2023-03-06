@@ -4,7 +4,10 @@
 #include "SInteractionComponent.h"
 #include "DrawDebugHelpers.h"
 #include "SGameplayInterface.h"
-#include "ColorManagement/Public/ColorManagementDefines.h"
+
+
+static TAutoConsoleVariable<bool> CVarDebugDrawInteraction(TEXT("su.InteractionDebugDraw"), false, TEXT("Enable Debug lines for Interaction Component"), ECVF_Cheat);
+
 
 // Sets default values for this component's properties
 USInteractionComponent::USInteractionComponent()
@@ -16,27 +19,10 @@ USInteractionComponent::USInteractionComponent()
 	// ...
 }
 
-
-// Called when the game starts
-void USInteractionComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// ...
-}
-
-
-// Called every frame
-void USInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType,
-                                           FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-
 void USInteractionComponent::PrimaryInteract()
 {
+	bool bDebugDraw = CVarDebugDrawInteraction.GetValueOnGameThread();
+
 	FCollisionObjectQueryParams ObjectQueryParams;
 	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
 
@@ -54,12 +40,17 @@ void USInteractionComponent::PrimaryInteract()
 	FCollisionShape Shape;
 	Shape.SetSphere(Radius);
 
-	bool bBlockingHit = GetWorld()->SweepMultiByObjectType(Hits, EyeLocation, End, FQuat::Identity, ObjectQueryParams,
-	                                                       Shape);
+	bool bBlockingHit = GetWorld()->SweepMultiByObjectType(Hits, EyeLocation, End, FQuat::Identity, ObjectQueryParams, Shape);
 	FColor LineColour = bBlockingHit ? FColor::Green : FColor::Red;
 
 	for (FHitResult Hit : Hits)
 	{
+		// DEBUG
+		if (bDebugDraw)
+		{
+			DrawDebugSphere(GetWorld(), Hit.ImpactPoint, Radius, 32, LineColour, false, 2.0f);
+		}
+
 		AActor* HitActor = Hit.GetActor();
 		if (HitActor)
 		{
@@ -68,14 +59,16 @@ void USInteractionComponent::PrimaryInteract()
 				APawn* MyPawn = Cast<APawn>(MyOwner);
 
 				ISGameplayInterface::Execute_Interact(HitActor, MyPawn);
-				
-				DrawDebugSphere(GetWorld(), Hit.ImpactPoint, Radius, 32, LineColour, false, 2.0f);
 				break;
 			}
 		}
 	}
 
-	DrawDebugLine(GetWorld(), EyeLocation, End, LineColour, false, 2.0f, 0, 2.0f);
+	// DEBUG
+	if (bDebugDraw)
+	{
+		DrawDebugLine(GetWorld(), EyeLocation, End, LineColour, false, 2.0f, 0, 2.0f);
+	}
 }
 
 /// CODE EXAMPLES

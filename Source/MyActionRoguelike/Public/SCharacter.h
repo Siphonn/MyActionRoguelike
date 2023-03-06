@@ -26,7 +26,7 @@ protected:
 	FName TimeToHitParamName;
 	UPROPERTY(VisibleAnywhere, Category="Effects")
 	FName HandSocketName;
-	
+
 	UPROPERTY(EditAnywhere, Category="Attack")
 	TSubclassOf<ASProjectileBase> ProjectileClass;
 	UPROPERTY(EditAnywhere, Category= "Attack")
@@ -71,21 +71,17 @@ protected:
 	void DashAbility();
 	void DashAbility_Elapsed();
 	void PrimaryInteract();
+	
+	void SpawnProjectile(TSubclassOf<AActor> ClassToSpawn);
 
 	UFUNCTION()
-	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
-						 OwningComp, float NewHealth, float Delta);
-
+	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
+	
 	virtual void PostInitializeComponents() override;
 
-private:
-	void SpawnProjectile(TSubclassOf<AActor> ClassToSpawn);
-	//void GetProjectileSpawnTransform(FTransform& SpawnTM) const;
+	virtual FVector GetPawnViewLocation() const override;
 
 public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
