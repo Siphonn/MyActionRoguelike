@@ -32,10 +32,21 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="AI")
 	int32 CreditOnKill;
 
+	UPROPERTY(EditDefaultsOnly,Category="Power Ups")
+	TArray<TSubclassOf<AActor>> PowerUps;
+	UPROPERTY(EditDefaultsOnly, Category="Power Ups")
+	UEnvQuery* PowerUpQuery;
+	UPROPERTY(EditDefaultsOnly, Category="Power Ups")
+	int32 MaxNumberOfPowerUps;
+	UPROPERTY(EditDefaultsOnly, Category="Power Ups")
+	float PowerUpSpawnDistance;
+
 	UFUNCTION()
 	void SpawnBotTimerElapsed();
 	UFUNCTION()
-	void OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
+	void OnSpawnBotQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
+	UFUNCTION()
+	void OnSpawnPowerUpQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 	UFUNCTION()
 	void RespawnPlayerElapsed(AController* Controller);
 
