@@ -6,6 +6,7 @@
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "SAttributeComponent.h"
 #include "SCharacter.h"
+#include "SPlayerState.h"
 
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true, TEXT("Enable spawning of bots using timer."), ECVF_Cheat);
@@ -14,6 +15,7 @@ static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true, TEXT
 ASGameModeBase::ASGameModeBase()
 {
 	SpawnTimerInterval = 2.0f;
+	CreditOnKill = 20;
 }
 
 void ASGameModeBase::StartPlay()
@@ -38,6 +40,19 @@ void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 		float RespawnDelay = 2.0f;
 		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, RespawnDelay, false);
 	}
+	else
+	{
+		ASCharacter* PlayerCharacter = Cast<ASCharacter>(Killer);
+		if (PlayerCharacter)
+		{
+			ASPlayerState* PlayerState = PlayerCharacter->GetPlayerState<ASPlayerState>();
+			if (PlayerState)
+			{
+				PlayerState->AddCredit(CreditOnKill);
+			}
+		}
+	}
+
 	UE_LOG(LogTemp, Log, TEXT("OnActorKilled: Victim %s, Killer: %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));
 }
 
@@ -57,6 +72,7 @@ void ASGameModeBase::KillAll()
 
 void ASGameModeBase::SpawnBotTimerElapsed()
 {
+	// CVAR
 	if (!CVarSpawnBots.GetValueOnGameThread())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Bot spawning disabled via cvar 'CVarSapwnBots'."));

@@ -3,6 +3,7 @@
 
 #include "SHealthPotion.h"
 #include "SAttributeComponent.h"
+#include "SPlayerState.h"
 
 
 ASHealthPotion::ASHealthPotion()
@@ -11,24 +12,25 @@ ASHealthPotion::ASHealthPotion()
 	// Disable collision, instead we use SphereComp to handle interaction queries
 	BottleMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	BottleMesh->SetupAttachment(RootComponent);
+	CreditCost = 10;
 }
 
 void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 {
-	if(!ensure(InstigatorPawn))
-	{
-		return;
-	}
-	
-	USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(
-		InstigatorPawn->GetComponentByClass(USAttributeComponent::StaticClass()));
-	/// Check if not already at max health
+	if (!ensure(InstigatorPawn)) { return; }
+
+	USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(InstigatorPawn->GetComponentByClass(USAttributeComponent::StaticClass()));
+	// Check if not already at max health
 	if (ensure(AttributeComp) && !AttributeComp->IsFullHealth())
 	{
-		/// only activate if healed successfully
-		if(AttributeComp->ApplyHealthChange(this, AttributeComp->GetMaxHealth()))
+		if (ASPlayerState* PlayerState = InstigatorPawn->GetPlayerState<ASPlayerState>())
 		{
-			HideAndCooldownPowerUp();
+			// Check for credits
+			/// only activate if healed successfully
+			if (PlayerState->RemoveCredits(CreditCost) && AttributeComp->ApplyHealthChange(this, AttributeComp->GetMaxHealth()))
+			{
+				HideAndCooldownPowerUp();
+			}
 		}
 	}
 }

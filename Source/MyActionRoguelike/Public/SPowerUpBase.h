@@ -26,7 +26,7 @@ protected:
 
 	UFUNCTION()
 	void ShowPowerUp();
-	
+
 	void HideAndCooldownPowerUp();
 	void SetPowerUpState(bool bNewIsActive);
 

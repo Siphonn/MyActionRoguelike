@@ -4,23 +4,24 @@
 
 #include "CoreMinimal.h"
 #include "SPowerUpBase.h"
-#include "SHealthPotion.generated.h"
+#include "SCoinPickup.generated.h"
 
-class UStaticMeshComponent;
-
+/**
+ * 
+ */
 UCLASS()
-class MYACTIONROGUELIKE_API ASHealthPotion : public ASPowerUpBase
+class MYACTIONROGUELIKE_API ASCoinPickup : public ASPowerUpBase
 {
 	GENERATED_BODY()
 
 public:
-	ASHealthPotion();
+	ASCoinPickup();
 
 	void Interact_Implementation(APawn* InstigatorPawn) override;
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category="Components")
-	UStaticMeshComponent* BottleMesh;
-	UPROPERTY(EditAnywhere, Category="Health")
-	int32 CreditCost;
+	UStaticMeshComponent* MeshComp;
+	UPROPERTY(EditAnywhere, Category="Credits")
+	int32 CreditAmount;
 };

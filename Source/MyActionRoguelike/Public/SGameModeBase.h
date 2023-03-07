@@ -22,24 +22,20 @@ class MYACTIONROGUELIKE_API ASGameModeBase : public AGameModeBase
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="AI")
 	TSubclassOf<AActor> MinionClass;
-
 	UPROPERTY(EditDefaultsOnly, Category="AI")
 	UEnvQuery* SpawnBotQuery;
-
 	UPROPERTY(EditDefaultsOnly, Category="AI")
 	UCurveFloat* DifficultyCurve;
-	
 	FTimerHandle TimerHandle_SpawnBots;
-
 	UPROPERTY(EditDefaultsOnly, Category="AI")
 	float SpawnTimerInterval;
+	UPROPERTY(EditDefaultsOnly, Category="AI")
+	int32 CreditOnKill;
 
 	UFUNCTION()
 	void SpawnBotTimerElapsed();
-
 	UFUNCTION()
 	void OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
-
 	UFUNCTION()
 	void RespawnPlayerElapsed(AController* Controller);
 
