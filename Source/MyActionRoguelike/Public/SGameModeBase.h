@@ -19,6 +19,16 @@ class MYACTIONROGUELIKE_API ASGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 
+public:
+	ASGameModeBase();
+
+	virtual void StartPlay() override;
+
+	virtual void OnActorKilled(AActor* VictimActor, AActor* Killer);
+	
+	UFUNCTION(Exec)
+	void KillAll();
+
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="AI")
 	TSubclassOf<AActor> MinionClass;
@@ -49,14 +59,4 @@ protected:
 	void OnSpawnPowerUpQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 	UFUNCTION()
 	void RespawnPlayerElapsed(AController* Controller);
-
-public:
-	ASGameModeBase();
-
-	virtual void StartPlay() override;
-
-	virtual void OnActorKilled(AActor* VictimActor, AActor* Killer);
-	
-	UFUNCTION(Exec)
-	void KillAll();
 };
