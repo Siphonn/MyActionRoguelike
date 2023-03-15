@@ -20,8 +20,6 @@ public:
 	void Interact_Implementation(APawn* InstigatorPawn) override;
 
 protected:
-	UPROPERTY(VisibleAnywhere, Category="Components")
-	UStaticMeshComponent* MeshComp;
 	UPROPERTY(EditAnywhere, Category="Credits")
 	int32 CreditAmount;
 };

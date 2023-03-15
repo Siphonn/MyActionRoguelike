@@ -4,6 +4,11 @@
 #include "SPlayerState.h"
 
 
+int32 ASPlayerState::GetCredits() const
+{
+	return Credits;
+}
+
 void ASPlayerState::AddCredit(int32 CreditAmount)
 {
 	if (!ensure(CreditAmount > 0.0f))
@@ -24,6 +29,7 @@ bool ASPlayerState::RemoveCredits(int CreditAmount)
 
 	if (Credits < CreditAmount)
 	{
+		// Not enough credits available 
 		return false;
 	}
 

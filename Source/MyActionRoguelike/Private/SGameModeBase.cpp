@@ -18,6 +18,8 @@ ASGameModeBase::ASGameModeBase()
 	CreditOnKill = 20;
 	MaxNumberOfPowerUps = 10;
 	PowerUpSpawnDistance = 1000.f;
+
+	PlayerStateClass = ASPlayerState::StaticClass();
 }
 
 void ASGameModeBase::StartPlay()
@@ -42,6 +44,8 @@ void ASGameModeBase::StartPlay()
 
 void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 {
+	UE_LOG(LogTemp, Log, TEXT("OnActorKilled: Victim %s, Killer: %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));
+
 	ASCharacter* Player = Cast<ASCharacter>(VictimActor);
 	if (Player)
 	{
@@ -53,20 +57,16 @@ void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 		float RespawnDelay = 2.0f;
 		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, RespawnDelay, false);
 	}
-	else
+
+	APawn* KillerPawn = Cast<APawn>(Killer);
+	if (KillerPawn)
 	{
-		ASCharacter* PlayerCharacter = Cast<ASCharacter>(Killer);
-		if (PlayerCharacter)
+		ASPlayerState* PlayerState = KillerPawn->GetPlayerState<ASPlayerState>();
+		if (PlayerState)
 		{
-			ASPlayerState* PlayerState = PlayerCharacter->GetPlayerState<ASPlayerState>();
-			if (PlayerState)
-			{
-				PlayerState->AddCredit(CreditOnKill);
-			}
+			PlayerState->AddCredit(CreditOnKill);
 		}
 	}
-
-	UE_LOG(LogTemp, Log, TEXT("OnActorKilled: Victim %s, Killer: %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));
 }
 
 void ASGameModeBase::KillAll()
@@ -156,7 +156,6 @@ void ASGameModeBase::OnSpawnPowerUpQueryCompleted(UEnvQueryInstanceBlueprintWrap
 	}
 
 	TArray<FVector> Locations = QueryInstance->GetResultsAsLocations();
-	//UE_LOG(LogTemp, Warning, TEXT("Number of possible PowerUp spawn locations is : %d"), Locations.Num());
 
 	TArray<FVector> UsedLocations;
 	int32 SpawnCounter = 0;
@@ -184,7 +183,8 @@ void ASGameModeBase::OnSpawnPowerUpQueryCompleted(UEnvQueryInstanceBlueprintWrap
 		if (bValidLocation)
 		{
 			SpawnCounter++;
-			// Select a random pickup to spawn
+			// TODO: current only work with 2 types of power-up. Random number between 0 & Powerups length (-1). Used Power at this index 
+			// Select a random pickup to spawn.
 			TSubclassOf<AActor> RandomPowerUp = FMath::RandBool() ? PowerUps[0] : PowerUps[1];
 			GetWorld()->SpawnActor<AActor>(RandomPowerUp, PickedLocation, FRotator::ZeroRotator);
 		}

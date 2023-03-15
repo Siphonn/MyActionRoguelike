@@ -19,8 +19,6 @@ public:
 	void Interact_Implementation(APawn* InstigatorPawn) override;
 
 protected:
-	UPROPERTY(VisibleAnywhere, Category="Components")
-	UStaticMeshComponent* BottleMesh;
 	UPROPERTY(EditAnywhere, Category="Health")
 	int32 CreditCost;
 };

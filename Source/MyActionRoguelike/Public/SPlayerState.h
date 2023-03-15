@@ -14,13 +14,17 @@ class MYACTIONROGUELIKE_API ASPlayerState : public APlayerState
 	GENERATED_BODY()
 
 protected:
-	int Credits;
-	
+	UPROPERTY(EditDefaultsOnly, Category="Credits")
+	int32 Credits;
+
 public:
-	UFUNCTION(BlueprintCallable, Category="PlayerState|Credits")
+	UFUNCTION(BlueprintCallable, Category="Credits")
+	int32 GetCredits() const;
+
+	UFUNCTION(BlueprintCallable, Category="Credits")
 	void AddCredit(int32 CreditAmount);
 
-	UFUNCTION(BlueprintCallable, Category="PlayerState|Credits")
+	UFUNCTION(BlueprintCallable, Category="Credits")
 	bool RemoveCredits(int CreditAmount);
 
 	UPROPERTY(BlueprintAssignable, Category="Events")
