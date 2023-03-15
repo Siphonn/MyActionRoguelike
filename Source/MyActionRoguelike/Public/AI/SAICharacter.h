@@ -8,6 +8,7 @@
 #include "SWorldUserWidget.h"
 #include "SAICharacter.generated.h"
 
+class USActionComponent;
 class UPawnSensingComponent;
 class USWorldUserWidget;
 class UUserWidget;
@@ -27,6 +28,8 @@ protected:
 	UPawnSensingComponent* PawnSensingComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	USAttributeComponent* AttributeComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	USActionComponent* ActionComp;
 	UPROPERTY(VisibleAnywhere, Category="Effects")
 	FName TimeToHitParam;
 	UPROPERTY(EditDefaultsOnly, Category="UI")
@@ -39,6 +42,5 @@ protected:
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
 	UFUNCTION()
-	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
-						 OwningComp, float NewHealth, float Delta);
+	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
 };

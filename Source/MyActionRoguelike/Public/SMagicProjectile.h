@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "SProjectileBase.h"
 #include "Sound/SoundCue.h"
 #include "SMagicProjectile.generated.h"
@@ -19,12 +20,14 @@ public:
 	TSubclassOf<UCameraShakeBase> CameraShake;
 
 protected:
-	UFUNCTION()
-	void OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-protected:
+	UPROPERTY(EditDefaultsOnly, Category="Damage")
+	float DamageAmount;
+	UPROPERTY(EditDefaultsOnly, Category="Damage")
+	FGameplayTag ParryTag;
 	UPROPERTY(EditDefaultsOnly, Category="Sounds")
 	USoundCue* ImpactSFX;
-	UPROPERTY(EditAnywhere, Category="Magic Projectile")
-	float DamageAmount = 20.0f;
+
+
+	UFUNCTION()
+	void OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };
