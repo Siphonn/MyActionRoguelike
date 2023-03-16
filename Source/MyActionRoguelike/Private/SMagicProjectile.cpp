@@ -3,6 +3,7 @@
 
 #include "SMagicProjectile.h"
 #include "SActionComponent.h"
+#include "SActionEffect.h"
 #include "SAttributeComponent.h"
 #include "SGameplayFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -35,6 +36,12 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 		{
 			UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSFX, GetActorLocation());
 			Explode();
+
+			//Burning Effect
+			if (ActionComp && ensure(BurningActionClass))
+			{
+				ActionComp->AddAction(GetInstigator(), BurningActionClass);
+			}
 		}
 	}
 }

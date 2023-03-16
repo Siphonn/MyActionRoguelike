@@ -17,12 +17,14 @@ class MYACTIONROGUELIKE_API USActionComponent : public UActorComponent
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Tags")
 	FGameplayTagContainer ActiveGameplayTags;
-	
+
 	// Sets default values for this component's properties
 	USActionComponent();
 
 	UFUNCTION(BlueprintCallable, Category="Action")
-	void AddAction(TSubclassOf<USAction> ActionClass);
+	void AddAction(AActor* Instigator, TSubclassOf<USAction> ActionClass);
+	UFUNCTION(BlueprintCallable, Category="Action")
+	void RemoveAction(USAction* ActionToRemove);
 	UFUNCTION(BlueprintCallable, Category="Action")
 	bool StartActionByName(AActor* Instigator, FName ActionName);
 	UFUNCTION(BlueprintCallable, Category="Action")

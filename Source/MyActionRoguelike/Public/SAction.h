@@ -16,8 +16,11 @@ class MYACTIONROGUELIKE_API USAction : public UObject
 	GENERATED_BODY()
 
 public:
+	/* Start immediately when added to an action component */
+	UPROPERTY(EditDefaultsOnly, Category="Action")
+	bool bAutoStart;
 	/* Action nickname to start/stop without a reference to the object*/
-	UPROPERTY(EditDefaultsOnly, Category="Actions")
+	UPROPERTY(EditDefaultsOnly, Category="Action")
 	FName ActionName;
 
 	UFUNCTION(BlueprintNativeEvent, Category="Action")

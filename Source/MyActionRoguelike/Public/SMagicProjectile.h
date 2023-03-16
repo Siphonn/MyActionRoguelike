@@ -8,6 +8,8 @@
 #include "Sound/SoundCue.h"
 #include "SMagicProjectile.generated.h"
 
+class USActionEffect;
+
 UCLASS()
 class MYACTIONROGUELIKE_API ASMagicProjectile : public ASProjectileBase
 {
@@ -24,7 +26,9 @@ protected:
 	float DamageAmount;
 	UPROPERTY(EditDefaultsOnly, Category="Damage")
 	FGameplayTag ParryTag;
-	UPROPERTY(EditDefaultsOnly, Category="Sounds")
+	UPROPERTY(EditDefaultsOnly, Category="Damage")
+	TSubclassOf<USActionEffect> BurningActionClass;
+	UPROPERTY(EditDefaultsOnly, Category="Effects")
 	USoundCue* ImpactSFX;
 
 
