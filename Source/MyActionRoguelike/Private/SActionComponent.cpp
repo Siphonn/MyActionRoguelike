@@ -36,7 +36,7 @@ void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> Acti
 	if (ensure(NewAction))
 	{
 		Actions.Add(NewAction);
-		
+
 		if (NewAction->bAutoStart && ensure(NewAction->CanStart(Instigator)))
 		{
 			NewAction->StartAction(Instigator);
@@ -87,4 +87,18 @@ bool USActionComponent::StopActionByName(AActor* Instigator, FName ActionName)
 		}
 	}
 	return false;
+}
+
+// Returns the same Action if it is in'Actions'
+USAction* USActionComponent::GetAction(TSubclassOf<USAction> ActionClass) const
+{
+	for (USAction* Action : Actions)
+	{
+		if (Action && Action->IsA(ActionClass))
+		{
+			return Action;
+		}
+	}
+	
+	return nullptr;
 }

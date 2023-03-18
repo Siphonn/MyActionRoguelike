@@ -20,9 +20,12 @@ ASAICharacter::ASAICharacter()
 	AttributeComp = CreateDefaultSubobject<USAttributeComponent>("AttributeComp");
 	ActionComp = CreateDefaultSubobject<USActionComponent>("ActionComp");
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
 	GetMesh()->SetGenerateOverlapEvents(true);
+
 	TimeToHitParam = "TimeToHit";
+	TargetActorKey = "TargetActor";
 }
 
 void ASAICharacter::PostInitializeComponents()
@@ -33,6 +36,7 @@ void ASAICharacter::PostInitializeComponents()
 	AttributeComp->OnHealthChanged.AddDynamic(this, &ASAICharacter::OnHealthChanged);
 }
 
+// Set the TargetActor value in the BlackBoard component
 void ASAICharacter::SetTargetActor(AActor* NewTarget)
 {
 	AAIController* AIController = Cast<AAIController>(GetController());
@@ -40,14 +44,45 @@ void ASAICharacter::SetTargetActor(AActor* NewTarget)
 	{
 		UBlackboardComponent* BlackBoardComp = AIController->GetBlackboardComponent();
 
-		BlackBoardComp->SetValueAsObject("TargetActor", NewTarget);
+		BlackBoardComp->SetValueAsObject(TargetActorKey, NewTarget);
 	}
+}
+
+AActor* ASAICharacter::GetTargetActor() const
+{
+	AAIController* AIController = Cast<AAIController>(GetController());
+	if (AIController)
+	{
+		return Cast<AActor>(AIController->GetBlackboardComponent()->GetValueAsObject(TargetActorKey));
+	}
+	return nullptr;
 }
 
 void ASAICharacter::OnPawnSeen(APawn* Pawn)
 {
-	SetTargetActor(Pawn);
-	DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
+	if(GetTargetActor() != Pawn)
+	{
+		SetTargetActor(Pawn);
+		
+
+		// TODO: Enable Exclamation mark widget
+		// Disable after set time
+		if (ExclamationMarkInstance == nullptr && ensure(ExclamationMarkWidget))
+		{
+			ExclamationMarkInstance = CreateWidget<USWorldUserWidget>(GetWorld(), ExclamationMarkWidget);
+		}
+
+		if (ExclamationMarkInstance)
+		{
+			ExclamationMarkInstance->AttachedActor = this;
+
+			if (!ExclamationMarkInstance->IsInViewport())
+			{
+				ExclamationMarkInstance->AddToViewport(10);
+			}
+		}
+	}
+	// DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
 }
 
 void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta)

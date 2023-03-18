@@ -29,6 +29,8 @@ public:
 	bool StartActionByName(AActor* Instigator, FName ActionName);
 	UFUNCTION(BlueprintCallable, Category="Action")
 	bool StopActionByName(AActor* Instigator, FName ActionName);
+	UFUNCTION(BlueprintCallable, Category="Action")
+	USAction* GetAction(TSubclassOf<USAction> ActionClass) const;
 
 protected:
 	UPROPERTY()

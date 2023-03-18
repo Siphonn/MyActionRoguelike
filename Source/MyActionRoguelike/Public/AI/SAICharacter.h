@@ -30,15 +30,25 @@ protected:
 	USAttributeComponent* AttributeComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	USActionComponent* ActionComp;
+
 	UPROPERTY(VisibleAnywhere, Category="Effects")
 	FName TimeToHitParam;
+	UPROPERTY(VisibleAnywhere, Category="Effects")
+	FName TargetActorKey;
+
 	UPROPERTY(EditDefaultsOnly, Category="UI")
 	TSubclassOf<UUserWidget> HealthBarWidgetClass;
 	UPROPERTY(EditDefaultsOnly, Category="UI")
 	USWorldUserWidget* ActiveHealthBar;
+	UPROPERTY(EditDefaultsOnly, Category="UI")
+	TSubclassOf<USWorldUserWidget> ExclamationMarkWidget;
+	UPROPERTY()
+	USWorldUserWidget* ExclamationMarkInstance;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category="AI")
 	void SetTargetActor(AActor* NewTarget);
+	UFUNCTION(BlueprintCallable, Category="AI")
+	AActor* GetTargetActor() const;
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
 	UFUNCTION()
