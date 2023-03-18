@@ -136,17 +136,25 @@ void ASCharacter::PrimaryInteract()
 
 void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta)
 {
+	UE_LOG(LogTemp, Warning, TEXT("OnHealthChanged"));
+
+	// Damage
 	if (Delta < 0.0f)
 	{
 		GetMesh()->SetScalarParameterValueOnMaterials(TimeToHitParamName, GetWorld()->TimeSeconds);
 		GetMesh()->SetScalarParameterValueOnMaterials("HitFlashSpeed", HitFadeSpeed);
 		GetMesh()->SetVectorParameterValueOnMaterials("Hit Colour", FVector(FadeColour));
+
+		// Add to "Rage" value (Rage value in Attribute Component)
+		Delta = FMath::Abs(Delta * 0.5f); //* 0.25f
+		AttributeComp->ApplyRageChange(InstigatorActor, Delta);
 	}
 
-	if (NewHealth <= 0.0f && Delta < 0.0f)
+	// Death
+	if (NewHealth <= 0.0f) // && Delta < 0.0f
 	{
 		APlayerController* PC = Cast<APlayerController>(GetController());
 		DisableInput(PC);
+		UE_LOG(LogTemp, Warning, TEXT("DEATH"));
 	}
 }
-

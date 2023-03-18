@@ -18,9 +18,6 @@ class MYACTIONROGUELIKE_API ASMagicProjectile : public ASProjectileBase
 public:
 	ASMagicProjectile();
 
-	UPROPERTY(EditAnywhere, Category="Camera Shake")
-	TSubclassOf<UCameraShakeBase> CameraShake;
-
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Damage")
 	float DamageAmount;
@@ -28,8 +25,6 @@ protected:
 	FGameplayTag ParryTag;
 	UPROPERTY(EditDefaultsOnly, Category="Damage")
 	TSubclassOf<USActionEffect> BurningActionClass;
-	UPROPERTY(EditDefaultsOnly, Category="Effects")
-	USoundCue* ImpactSFX;
 
 
 	UFUNCTION()

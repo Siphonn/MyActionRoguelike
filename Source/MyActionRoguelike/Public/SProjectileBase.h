@@ -8,6 +8,8 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "SProjectileBase.generated.h"
 
+class UCameraShakeBase;
+class USoundCue;
 class USphereComponent;
 class UProjectileMovementComponent;
 class UParticleSystemComponent;
@@ -23,8 +25,20 @@ public:
 	ASProjectileBase();
 
 protected:
+	UPROPERTY(EditAnywhere, Category="Effects|Camera Shake")
+	TSubclassOf<UCameraShakeBase> CameraShake;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Effects|Camera Shake")
+	float ImpactShakeInnerRadius;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Effects|Camera Shake")
+	float ImpactShakeOuterRadius;
+
 	UPROPERTY(EditDefaultsOnly, Category="Effects")
 	UParticleSystem* ImpactVFX;
+
+	UPROPERTY(EditDefaultsOnly, Category="Effects")
+	USoundCue* ImpactSFX;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	USphereComponent* SphereComp;
@@ -40,8 +54,7 @@ protected:
 
 	/// 'virtual' so we can override this child-class 
 	UFUNCTION()
-	virtual void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	                        FVector NormalImpulse, const FHitResult& Hit);
+	virtual void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	/// BlueprintNativeEvent = C++ base implementation, can be expanded in Blueprints
 	/// BlueprintCallable to allow child classes to trigger	explosions

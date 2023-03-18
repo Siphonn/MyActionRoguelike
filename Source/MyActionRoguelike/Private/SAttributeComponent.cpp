@@ -11,8 +11,10 @@ static TAutoConsoleVariable<float> CVarDamageMultiplier(TEXT("su.DamageMultiplie
 // Sets default values for this component's properties
 USAttributeComponent::USAttributeComponent()
 {
-	Health = 100;
-	MaxHealth = 100;
+	Health = 100.0f;
+	MaxHealth = 100.0f;
+	Rage = 0.0f;
+	MaxRage = 50.0f;
 }
 
 USAttributeComponent* USAttributeComponent::GetAttributes(AActor* FromActor)
@@ -61,6 +63,11 @@ bool USAttributeComponent::Kill(AActor* InstigatorActor)
 	return ApplyHealthChange(InstigatorActor, -GetMaxHealth());
 }
 
+float USAttributeComponent::GetRage() const
+{
+	return Rage;
+}
+
 bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
 	if (!GetOwner()->CanBeDamaged() && Delta < 0.0f)
@@ -68,7 +75,7 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 		return false;
 	}
 
-	if(Delta< 0.0f)
+	if (Delta < 0.0f)
 	{
 		float DamageMultiplier = CVarDamageMultiplier.GetValueOnGameThread();
 
@@ -91,6 +98,21 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 		{
 			GameMode->OnActorKilled(GetOwner(), InstigatorActor);
 		}
+	}
+
+	return ActualDelta != 0;
+}
+
+bool USAttributeComponent::ApplyRageChange(AActor* InstigatorActor, float Delta)
+{
+	float OldRage = Rage;
+
+	Rage = FMath::Clamp(Rage + Delta, 0, MaxRage);
+
+	float ActualDelta = Rage - OldRage;
+	if (ActualDelta != 0)
+	{
+		OnRageChanged.Broadcast(InstigatorActor, this, Rage, ActualDelta);
 	}
 
 	return ActualDelta != 0;
