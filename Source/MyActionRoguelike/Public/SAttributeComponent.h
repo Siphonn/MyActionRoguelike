@@ -37,9 +37,9 @@ protected:
 	/// --
 	/// Category = "" -  displayed only for detail panel and blueprint context menu.
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attributes")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category="Attributes")
 	float Health;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attributes")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category="Attributes")
 	float MaxHealth;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attributes")
 	float Rage;
@@ -48,6 +48,8 @@ protected:
 
 	// MaxHealth, Stamina, Strength
 
+	UFUNCTION(NetMulticast, Reliable) // TODO: mark as unreliable once we've moved the 'state' out of scharacter 
+	void MulticastHealthChanged(AActor* InstigatorActor, float NewHealth, float Delta);
 
 public:
 	UFUNCTION(BlueprintCallable, Category="Attributes")

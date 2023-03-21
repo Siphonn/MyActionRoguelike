@@ -17,14 +17,13 @@ class MYACTIONROGUELIKE_API USWorldUserWidget : public UUserWidget
 	GENERATED_BODY()
 
 protected:
-
 	UPROPERTY(meta = (BindWidget))
 	USizeBox* ParentSizeBox;
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 public:
-	UPROPERTY(BlueprintReadOnly, Category="UI")
+	UPROPERTY(BlueprintReadWrite, Category="UI", meta=(ExposeOnSpawn=true))
 	AActor* AttachedActor;
 
 	UPROPERTY(EditAnywhere, Category="UI")
