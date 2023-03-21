@@ -17,16 +17,22 @@ class MYACTIONROGUELIKE_API ASItemChest : public AActor, public ISGameplayInterf
 public:
 	UPROPERTY(EditAnywhere)
 	float TargetPitch;
-	
+
 	// Sets default values for this actor's properties
 	ASItemChest();
-	
-	void Interact_Implementation(APawn* InstigatorPawn) override;
 
+	void Interact_Implementation(APawn* InstigatorPawn) override;
 
 protected:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* BaseMesh;
-	UPROPERTY(VisibleAnywhere , BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* LidMesh;
+
+	UPROPERTY(ReplicatedUsing="OnRep_LidOpen", BlueprintReadOnly) // RepNotify (name in blueprint)
+	bool bLidOpened;
+
+	// Function run when 'bLidOpen' value is updated on "Client"
+	UFUNCTION()
+	void OnRep_LidOpen();
 };

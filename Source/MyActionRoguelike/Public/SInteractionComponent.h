@@ -39,4 +39,10 @@ protected:
 	USWorldUserWidget* DefaultWidgetInstance;
 
 	void FindBestInteractable();
+
+	// Reliable - will always arrive, eventually. Request will be re-sent unless an acknowledgement was received. (TCP)
+	// Unreliable - Not guaranteed, packet can be lost and won't reply. (UDp)
+	
+	UFUNCTION(Server, Reliable)
+	void ServerInteract(AActor* InFocus);
 };

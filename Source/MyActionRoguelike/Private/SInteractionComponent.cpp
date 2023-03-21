@@ -14,7 +14,7 @@ static TAutoConsoleVariable<bool> CVarDebugDrawInteraction(TEXT("su.InteractionD
 USInteractionComponent::USInteractionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-	
+
 	TraceDistance = 500.0f;
 	TraceRadius = 30.0f;
 	CollisionChannel = ECC_WorldDynamic;
@@ -24,7 +24,12 @@ void USInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	FindBestInteractable();
+	// Only if is our Local Pawn (owner)
+	APawn* MyPawn = Cast<APawn>(GetOwner());
+	if (MyPawn->IsLocallyControlled())
+	{
+		FindBestInteractable();
+	}
 }
 
 void USInteractionComponent::FindBestInteractable()
@@ -51,7 +56,7 @@ void USInteractionComponent::FindBestInteractable()
 
 	// clear reference before trying to fill 
 	FocusedActor = nullptr;
-	
+
 	for (FHitResult Hit : Hits)
 	{
 		// DEBUG
@@ -91,7 +96,7 @@ void USInteractionComponent::FindBestInteractable()
 	}
 	else
 	{
-		if(DefaultWidgetInstance)
+		if (DefaultWidgetInstance)
 		{
 			DefaultWidgetInstance->RemoveFromParent();
 		}
@@ -106,7 +111,13 @@ void USInteractionComponent::FindBestInteractable()
 
 void USInteractionComponent::PrimaryInteract()
 {
-	if (FocusedActor == nullptr)
+	// Logic moved to 'ServerInteract' method
+	ServerInteract(FocusedActor); // Server will recognise 'FocusActor' ID
+}
+
+void USInteractionComponent::ServerInteract_Implementation(AActor* InFocus)
+{
+	if (InFocus == nullptr)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, "No Focus Actor to interact with");
 		return;
@@ -114,7 +125,7 @@ void USInteractionComponent::PrimaryInteract()
 
 	APawn* MyPawn = Cast<APawn>(GetOwner());
 
-	ISGameplayInterface::Execute_Interact(FocusedActor, MyPawn);
+	ISGameplayInterface::Execute_Interact(InFocus, MyPawn);
 }
 
 /// CODE EXAMPLES
