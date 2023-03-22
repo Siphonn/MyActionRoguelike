@@ -8,27 +8,21 @@
 
 void ASPowerUp_Action::Interact_Implementation(APawn* InstigatorPawn)
 {
-	//Super::Interact_Implementation(InstigatorPawn);
+	if (!ensure(InstigatorPawn && ActionToGrant)) { return; }
 
-	// TODO: confirm the Instigator does not have the "ActionToGrant" already
-	// if it does not add "ActionToGrant" to there "DefaultAction"
-
-	if (ensure(ActionToGrant))
+	USActionComponent* ActionComp = Cast<USActionComponent>(InstigatorPawn->GetComponentByClass(USActionComponent::StaticClass()));
+	if (ActionComp)
 	{
-		USActionComponent* ActionComp = Cast<USActionComponent>(InstigatorPawn->GetComponentByClass(USActionComponent::StaticClass()));
-		if (ActionComp)
+		// Check if "ActionToGrant" is already known
+		if (ActionComp->GetAction(ActionToGrant))
 		{
-			// Check if "ActionToGrant" is already known
-			if (ActionComp->GetAction(ActionToGrant))
-			{
-				FString FailMessage = FString::Printf(TEXT("%s is an Action that is already known"), *GetNameSafe(ActionToGrant));
-				GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FailMessage);
-				return;
-			}
-
-			// Add "ActionToGrant" to Actions
-			ActionComp->AddAction(InstigatorPawn, ActionToGrant);
-			HideAndCooldownPowerUp();
+			FString FailMessage = FString::Printf(TEXT("%s is an Action that is already known"), *GetNameSafe(ActionToGrant));
+			GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FailMessage);
+			return;
 		}
+
+		// Add "ActionToGrant" to Actions
+		ActionComp->AddAction(InstigatorPawn, ActionToGrant);
+		HideAndCooldownPowerUp();
 	}
 }

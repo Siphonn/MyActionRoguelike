@@ -42,8 +42,6 @@ protected:
 	USWorldUserWidget* ActiveHealthBar;
 	UPROPERTY(EditDefaultsOnly, Category="UI")
 	TSubclassOf<USWorldUserWidget> ExclamationMarkWidget;
-	UPROPERTY()
-	USWorldUserWidget* ExclamationMarkInstance;
 
 	UFUNCTION(BlueprintCallable, Category="AI")
 	void SetTargetActor(AActor* NewTarget);

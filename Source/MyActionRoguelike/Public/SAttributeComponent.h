@@ -7,9 +7,11 @@
 #include "SAttributeComponent.generated.h"
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnHealthChanged, AActor*, InstigatorActor, USAttributeComponent*, OwningComp, float, NewHealth, float, Delta);
+// DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnHealthChanged, AActor*, InstigatorActor, USAttributeComponent*, OwningComp, float, NewHealth, float, Delta);
+// DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnRageChanged, AActor*, InstigatorActor, USAttributeComponent*, OwningComp, float, NewRage, float, Delta);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnRageChanged, AActor*, InstigatorActor, USAttributeComponent*, OwningComp, float, NewRage, float, Delta);
+// Alternative: Share the same signature with generic names
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnAttributeChanged, AActor*, InstigatorActor, USAttributeComponent*, OwningComp, float, NewValue, float, Delta);
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -66,11 +68,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	float GetRage() const;
 
-	UPROPERTY(BlueprintAssignable, Category="Attributes")
-	FOnHealthChanged OnHealthChanged;
-	UPROPERTY(BlueprintAssignable, Category="Attributes")
-	FOnRageChanged OnRageChanged;
+	// UPROPERTY(BlueprintAssignable, Category="Attributes")
+	// FOnHealthChanged OnHealthChanged;
+	// UPROPERTY(BlueprintAssignable, Category="Attributes")
+	// FOnRageChanged OnRageChanged;
 
+	UPROPERTY(BlueprintAssignable, Category="Attributes")
+	FOnAttributeChanged OnHealthChanged;
+	UPROPERTY(BlueprintAssignable, Category="Attributes")
+	FOnAttributeChanged OnRageChanged;
+	
 	UFUNCTION(BlueprintCallable, Category="Attributes")
 	bool ApplyHealthChange(AActor* InstigatorActor, float Delta);
 	UFUNCTION(BlueprintCallable, Category="Attributes")

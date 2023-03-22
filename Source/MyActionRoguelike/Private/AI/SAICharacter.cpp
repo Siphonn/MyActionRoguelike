@@ -48,6 +48,7 @@ void ASAICharacter::SetTargetActor(AActor* NewTarget)
 	}
 }
 
+// Return targeted actor (Player) from AI controller blackboard component
 AActor* ASAICharacter::GetTargetActor() const
 {
 	AAIController* AIController = Cast<AAIController>(GetController());
@@ -60,26 +61,18 @@ AActor* ASAICharacter::GetTargetActor() const
 
 void ASAICharacter::OnPawnSeen(APawn* Pawn)
 {
-	if(GetTargetActor() != Pawn)
+	// Ignore if target is already set
+	if (GetTargetActor() != Pawn)
 	{
 		SetTargetActor(Pawn);
-		
 
-		// TODO: Enable Exclamation mark widget
-		// Disable after set time
-		if (ExclamationMarkInstance == nullptr && ensure(ExclamationMarkWidget))
+		USWorldUserWidget* NewWidget = CreateWidget<USWorldUserWidget>(GetWorld(), ExclamationMarkWidget);
+		if (NewWidget)
 		{
-			ExclamationMarkInstance = CreateWidget<USWorldUserWidget>(GetWorld(), ExclamationMarkWidget);
-		}
-
-		if (ExclamationMarkInstance)
-		{
-			ExclamationMarkInstance->AttachedActor = this;
-
-			if (!ExclamationMarkInstance->IsInViewport())
-			{
-				ExclamationMarkInstance->AddToViewport(10);
-			}
+			NewWidget->AttachedActor = this;
+			// Index of 10 (or anything higher than default of 0) place this on top of other widget.
+			// May end up behind the minion healthbar otherwise
+			NewWidget->AddToViewport(10);
 		}
 	}
 	// DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
