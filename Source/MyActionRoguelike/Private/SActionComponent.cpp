@@ -8,6 +8,8 @@
 USActionComponent::USActionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+
+	SetIsReplicatedByDefault(true);
 }
 
 void USActionComponent::BeginPlay()
@@ -66,6 +68,12 @@ bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 				continue;
 			}
 
+			// call only if is Client
+			if (!GetOwner()->HasAuthority())
+			{
+				ServerStartAction(Instigator, ActionName);
+			}
+
 			Action->StartAction(Instigator);
 			return true;
 		}
@@ -99,6 +107,11 @@ USAction* USActionComponent::GetAction(TSubclassOf<USAction> ActionClass) const
 			return Action;
 		}
 	}
-	
+
 	return nullptr;
+}
+
+void USActionComponent::ServerStartAction_Implementation(AActor* Instigator, FName ActionName)
+{
+	StartActionByName(Instigator, ActionName);
 }
