@@ -33,7 +33,7 @@ public:
 	USAction* GetAction(TSubclassOf<USAction> ActionClass) const;
 
 protected:
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	TArray<USAction*> Actions;
 
 	/* Grant abilities at game start */
@@ -47,4 +47,6 @@ protected:
 
 public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	virtual bool ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
 };

@@ -23,6 +23,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Action")
 	FName ActionName;
 
+	void Initialize(USActionComponent* NewActionComp);
+
 	UFUNCTION(BlueprintNativeEvent, Category="Action")
 	void StartAction(AActor* Instigator);
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Action")
@@ -34,6 +36,11 @@ public:
 
 	virtual UWorld* GetWorld() const override;
 
+	virtual bool IsSupportedForNetworking() const override
+	{
+		return true;
+	}
+
 protected:
 	/* Tags added to owning actor when activated, removed when action stops */
 	UPROPERTY(EditDefaultsOnly, Category="Tags")
@@ -42,7 +49,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Tags")
 	FGameplayTagContainer BlockedTags;
 
+	UPROPERTY(Replicated)
+	USActionComponent* ActionComp;
+
+	UPROPERTY(ReplicatedUsing="OnRep_IsRunning")
 	bool bIsRunning;
+
+	UFUNCTION()
+	void OnRep_IsRunning();
 
 	UFUNCTION(BlueprintCallable, Category="Action")
 	USActionComponent* GetOwningComponent() const;
