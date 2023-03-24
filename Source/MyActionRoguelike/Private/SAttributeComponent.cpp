@@ -123,7 +123,8 @@ bool USAttributeComponent::ApplyRageChange(AActor* InstigatorActor, float Delta)
 	float ActualDelta = Rage - OldRage;
 	if (ActualDelta != 0)
 	{
-		OnRageChanged.Broadcast(InstigatorActor, this, Rage, ActualDelta);
+		//OnRageChanged.Broadcast(InstigatorActor, this, Rage, ActualDelta);
+		MulticastRageChanged(InstigatorActor, Rage, ActualDelta);
 	}
 
 	return ActualDelta != 0;
@@ -134,11 +135,19 @@ void USAttributeComponent::MulticastHealthChanged_Implementation(AActor* Instiga
 	OnHealthChanged.Broadcast(InstigatorActor, this, NewHealth, Delta);
 }
 
+void USAttributeComponent::MulticastRageChanged_Implementation(AActor* InstigatorActor, float NewRage, float Delta)
+{
+	OnRageChanged.Broadcast(InstigatorActor, this, NewRage, Delta);
+}
+
 void USAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(USAttributeComponent, Health);
 	DOREPLIFETIME(USAttributeComponent, MaxHealth);
+	DOREPLIFETIME(USAttributeComponent, Rage);
+	DOREPLIFETIME(USAttributeComponent, MaxRage);
+
 	// DOREPLIFETIME_CONDITION(USAttributeComponent,MaxHealth, COND_InitialOnly);
 }

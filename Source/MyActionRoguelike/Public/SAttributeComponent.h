@@ -43,15 +43,17 @@ protected:
 	float Health;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category="Attributes")
 	float MaxHealth;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attributes")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category="Attributes")
 	float Rage;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attributes")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category="Attributes")
 	float MaxRage;
 
 	// MaxHealth, Stamina, Strength
 
 	UFUNCTION(NetMulticast, Reliable) // TODO: mark as unreliable once we've moved the 'state' out of scharacter 
 	void MulticastHealthChanged(AActor* InstigatorActor, float NewHealth, float Delta);
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRageChanged(AActor* InstigatorActor, float NewRage, float Delta);
 
 public:
 	UFUNCTION(BlueprintCallable, Category="Attributes")

@@ -2,6 +2,7 @@
 
 
 #include "SPlayerState.h"
+#include "Net/UnrealNetwork.h"
 
 
 int32 ASPlayerState::GetCredits() const
@@ -36,4 +37,22 @@ bool ASPlayerState::RemoveCredits(int CreditAmount)
 	Credits -= CreditAmount;
 	OnCreditsUpdated.Broadcast(this, Credits, -CreditAmount);
 	return true;
+}
+
+// void ASPlayerState::MulticastOnCreditsChanged_Implementation(int32 NewCredits, int32 Delta)
+// {
+// 	OnCreditsUpdated.Broadcast(this, NewCredits, Delta);
+// }
+
+void ASPlayerState::OnRep_Credits(int32 OldCredits)
+{
+	OnCreditsUpdated.Broadcast(this, Credits, Credits - OldCredits);
+	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, TEXT("OnRep_Credits function is run."));
+}
+
+void ASPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASPlayerState, Credits);
 }

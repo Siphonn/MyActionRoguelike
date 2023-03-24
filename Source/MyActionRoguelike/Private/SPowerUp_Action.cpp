@@ -23,6 +23,7 @@ void ASPowerUp_Action::Interact_Implementation(APawn* InstigatorPawn)
 
 		// Add "ActionToGrant" to Actions
 		ActionComp->AddAction(InstigatorPawn, ActionToGrant);
-		HideAndCooldownPowerUp();
+		//HideAndCooldownPowerUp();
+		 Super::Interact_Implementation(InstigatorPawn);
 	}
 }

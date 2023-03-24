@@ -14,8 +14,15 @@ class MYACTIONROGUELIKE_API ASPlayerState : public APlayerState
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category="Credits")
+	UPROPERTY(EditDefaultsOnly, ReplicatedUsing="OnRep_Credits" , Category="Credits") // Reliable
 	int32 Credits;
+
+	// Function run when 'credits' value is updated on "Client"
+	UFUNCTION()
+	void OnRep_Credits(int32 OldCredits);
+
+	// UFUNCTION(NetMulticast, Reliable)
+	// void MulticastOnCreditsChanged(int32 NewCredits, int32 Delta);
 
 public:
 	UFUNCTION(BlueprintCallable, Category="Credits")

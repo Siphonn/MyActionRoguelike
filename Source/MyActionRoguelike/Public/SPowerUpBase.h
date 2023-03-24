@@ -34,4 +34,11 @@ protected:
 	USphereComponent* SphereComp;
 	UPROPERTY(VisibleAnywhere, Category="Components")
 	UStaticMeshComponent* MeshComp;
+
+	// For Networking
+	UPROPERTY(ReplicatedUsing="OnRep_PowerUpUsed", BlueprintReadOnly)
+	bool bPowerUpUsed;
+
+	UFUNCTION()
+	void OnRep_PowerUpUsed();
 };

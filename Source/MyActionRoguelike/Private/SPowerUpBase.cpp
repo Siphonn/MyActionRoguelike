@@ -2,6 +2,7 @@
 
 
 #include "SPowerUpBase.h"
+#include "Net/UnrealNetwork.h"
 
 
 ASPowerUpBase::ASPowerUpBase()
@@ -23,6 +24,10 @@ ASPowerUpBase::ASPowerUpBase()
 void ASPowerUpBase::Interact_Implementation(APawn* InstigatorPawn)
 {
 	/// Logic in derived classes...
+	
+	bPowerUpUsed = !bPowerUpUsed;
+	// Run on server
+	OnRep_PowerUpUsed();
 }
 
 void ASPowerUpBase::ShowPowerUp()
@@ -43,4 +48,21 @@ void ASPowerUpBase::SetPowerUpState(bool bNewIsActive)
 
 	/// Set visibilty on root and all children
 	RootComponent->SetVisibility(bNewIsActive, true);
+}
+
+void ASPowerUpBase::OnRep_PowerUpUsed()
+{
+	// Apply PowerUp effect
+	// Hide and Cooldown power-up
+
+	// *NOTE: May only need to run Hide and Cooldown power-up 
+	
+	HideAndCooldownPowerUp();
+}
+
+void ASPowerUpBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASPowerUpBase, bPowerUpUsed);
 }

@@ -34,6 +34,10 @@ ASCharacter::ASCharacter()
 	bUseControllerRotationYaw = false;
 
 	TimeToHitParamName = "TimeToHit";
+
+	// TODO: Bind to FOnPossessedPawnChanged (delegate in AController)
+	// /** Called on both authorities and clients when the possessed pawn changes (either OldPawn or NewPawn might be nullptr) */
+	// Could be used to fix UI issues when Character dies.
 }
 
 void ASCharacter::PostInitializeComponents()

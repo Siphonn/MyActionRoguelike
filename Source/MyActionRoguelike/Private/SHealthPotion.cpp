@@ -25,7 +25,8 @@ void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 			/// only activate if healed successfully
 			if (PlayerState->RemoveCredits(CreditCost) && AttributeComp->ApplyHealthChange(this, AttributeComp->GetMaxHealth()))
 			{
-				HideAndCooldownPowerUp();
+				//HideAndCooldownPowerUp();
+				Super::Interact_Implementation(InstigatorPawn);
 			}
 		}
 	}
