@@ -49,6 +49,8 @@ protected:
 	AActor* GetTargetActor() const;
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastOnPawnSeen();
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
 };

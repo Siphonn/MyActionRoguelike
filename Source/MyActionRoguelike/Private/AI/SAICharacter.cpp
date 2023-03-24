@@ -66,16 +66,21 @@ void ASAICharacter::OnPawnSeen(APawn* Pawn)
 	{
 		SetTargetActor(Pawn);
 
-		USWorldUserWidget* NewWidget = CreateWidget<USWorldUserWidget>(GetWorld(), ExclamationMarkWidget);
-		if (NewWidget)
-		{
-			NewWidget->AttachedActor = this;
-			// Index of 10 (or anything higher than default of 0) place this on top of other widget.
-			// May end up behind the minion healthbar otherwise
-			NewWidget->AddToViewport(10);
-		}
+		MulticastOnPawnSeen();
 	}
 	// DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
+}
+
+void ASAICharacter::MulticastOnPawnSeen_Implementation()
+{
+	USWorldUserWidget* NewWidget = CreateWidget<USWorldUserWidget>(GetWorld(), ExclamationMarkWidget);
+	if (NewWidget)
+	{
+		NewWidget->AttachedActor = this;
+		// Index of 10 (or anything higher than default of 0) place this on top of other widget.
+		// May end up behind the minion healthbar otherwise
+		NewWidget->AddToViewport(10);
+	}
 }
 
 void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta)
