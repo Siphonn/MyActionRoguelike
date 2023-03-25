@@ -112,7 +112,7 @@ void USInteractionComponent::FindBestInteractable()
 void USInteractionComponent::PrimaryInteract()
 {
 	// Logic moved to 'ServerInteract' method
-	ServerInteract(FocusedActor); // Server will recognise 'FocusActor' ID
+	ServerInteract(FocusedActor); // Server will recognise 'FocusActor' by ID
 }
 
 void USInteractionComponent::ServerInteract_Implementation(AActor* InFocus)

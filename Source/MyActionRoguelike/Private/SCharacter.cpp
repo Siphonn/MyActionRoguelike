@@ -159,6 +159,7 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
 	{
 		APlayerController* PC = Cast<APlayerController>(GetController());
 		DisableInput(PC);
-		UE_LOG(LogTemp, Warning, TEXT("DEATH"));
+
+		SetLifeSpan(5.0f);
 	}
 }

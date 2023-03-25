@@ -32,12 +32,13 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 			return;
 		}
 
+		// Apply damage & impulse
 		if (USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, DamageAmount, SweepResult))
 		{
 			Explode();
 
 			//Burning Effect
-			if (ActionComp && ensure(BurningActionClass)) // && !ActionComp->ActiveGameplayTags.HasTag(BurningActionClass)
+			if (ActionComp && ensure(BurningActionClass) && HasAuthority()) // && !ActionComp->ActiveGameplayTags.HasTag(BurningActionClass)
 			{
 				ActionComp->AddAction(GetInstigator(), BurningActionClass);
 			}

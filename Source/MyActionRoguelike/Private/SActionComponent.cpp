@@ -41,11 +41,7 @@ void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	{
 		FColor TextColour = Action->IsRunning() ? FColor::Blue : FColor::White;
 
-		FString ActionMsg = FString::Printf(TEXT("[%s] Action is: %s : IsRunning: %s : Outer: %s"),
-		                                    *GetNameSafe(GetOwner()),
-		                                    *Action->ActionName.ToString(),
-		                                    Action->IsRunning() ? TEXT("true") : TEXT("false"),
-		                                    *GetNameSafe(Action->GetOuter()));
+		FString ActionMsg = FString::Printf(TEXT("[%s] Action is: %s"), *GetNameSafe(GetOwner()), *GetNameSafe(Action));
 
 		LogToScreen(this, ActionMsg, TextColour, 0.0f);
 	}
@@ -55,11 +51,18 @@ void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> Acti
 {
 	if (!ensure(ActionClass)) { return; }
 
+	// Skip for clients
+	if (!GetOwner()->HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Client attempting to AddAction. [Class: %s]"), *GetNameSafe(ActionClass));
+		return;
+	}
+
 	USAction* NewAction = NewObject<USAction>(GetOwner(), ActionClass);
 	if (ensure(NewAction))
 	{
 		NewAction->Initialize(this);
-		
+
 		Actions.Add(NewAction);
 
 		if (NewAction->bAutoStart && ensure(NewAction->CanStart(Instigator)))
@@ -91,12 +94,14 @@ bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 				continue;
 			}
 
-			// call only if is Client
+			// will run only if is Client
 			if (!GetOwner()->HasAuthority())
 			{
+				// Start Action on Server
 				ServerStartAction(Instigator, ActionName);
 			}
 
+			// Start Action locally 
 			Action->StartAction(Instigator);
 			return true;
 		}
@@ -112,6 +117,13 @@ bool USActionComponent::StopActionByName(AActor* Instigator, FName ActionName)
 		{
 			if (Action->IsRunning())
 			{
+				// Is Client?
+				if (!GetOwner()->HasAuthority())
+				{
+					// Start Action on Server
+					ServerStopAction(Instigator, ActionName);
+				}
+				
 				Action->StopAction(Instigator);
 				return true;
 			}
@@ -137,6 +149,11 @@ USAction* USActionComponent::GetAction(TSubclassOf<USAction> ActionClass) const
 void USActionComponent::ServerStartAction_Implementation(AActor* Instigator, FName ActionName)
 {
 	StartActionByName(Instigator, ActionName);
+}
+
+void USActionComponent::ServerStopAction_Implementation(AActor* Instigator, FName ActionName)
+{
+	StopActionByName(Instigator, ActionName);
 }
 
 bool USActionComponent::ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags)
