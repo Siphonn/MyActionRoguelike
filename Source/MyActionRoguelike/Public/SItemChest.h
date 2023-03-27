@@ -21,6 +21,8 @@ public:
 	// Sets default values for this actor's properties
 	ASItemChest();
 
+	virtual void OnActorLoaded_Implementation() override;
+	
 	void Interact_Implementation(APawn* InstigatorPawn) override;
 
 protected:
@@ -29,9 +31,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* LidMesh;
 
-	UPROPERTY(ReplicatedUsing="OnRep_LidOpen", BlueprintReadOnly) // RepNotify (name in blueprint)
+	UPROPERTY(ReplicatedUsing="OnRep_LidOpen", BlueprintReadOnly, SaveGame) // RepNotify (name in blueprint)
 	bool bLidOpened;
-
+	
 	// Function run when 'bLidOpen' value is updated on "Client"
 	UFUNCTION()
 	void OnRep_LidOpen();

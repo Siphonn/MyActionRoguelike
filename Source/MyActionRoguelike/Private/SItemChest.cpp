@@ -19,6 +19,11 @@ ASItemChest::ASItemChest()
 	SetReplicates(true);
 }
 
+void ASItemChest::OnActorLoaded_Implementation()
+{
+	OnRep_LidOpen();
+}
+
 void ASItemChest::Interact_Implementation(APawn* InstigatorPawn)
 {
 	bLidOpened = !bLidOpened;

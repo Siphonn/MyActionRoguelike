@@ -6,6 +6,24 @@
 #include "GameFramework/SaveGame.h"
 #include "SSaveGame.generated.h"
 
+USTRUCT()
+struct FActorSaveData
+{
+	GENERATED_BODY()
+
+public:
+	/* Identifier for which Actor this belongs too. */
+	UPROPERTY()
+	FString ActorName;
+
+	/* For movable Actors, keep location, rotation, scale. */
+	UPROPERTY()
+	FTransform Transform;
+
+	UPROPERTY()
+	TArray<uint8> ByteData;
+};
+
 /**
  * 
  */
@@ -17,4 +35,7 @@ class MYACTIONROGUELIKE_API USSaveGame : public USaveGame
 public:
 	UPROPERTY()
 	int32 Credits;
+
+	UPROPERTY()
+	TArray<FActorSaveData> SavedActors;
 };
