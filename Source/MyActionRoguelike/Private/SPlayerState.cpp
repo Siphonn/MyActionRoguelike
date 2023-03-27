@@ -3,6 +3,7 @@
 
 #include "SPlayerState.h"
 #include "Net/UnrealNetwork.h"
+#include "SSaveGame.h"
 
 
 int32 ASPlayerState::GetCredits() const
@@ -37,6 +38,22 @@ bool ASPlayerState::RemoveCredits(int CreditAmount)
 	Credits -= CreditAmount;
 	OnCreditsUpdated.Broadcast(this, Credits, -CreditAmount);
 	return true;
+}
+
+void ASPlayerState::SavePlayerState_Implementation(USSaveGame* SaveObject)
+{
+	if (SaveObject)
+	{
+		SaveObject->Credits = Credits;
+	}
+}
+
+void ASPlayerState::LoadPlayerState_Implementation(USSaveGame* SaveObject)
+{
+	if (SaveObject)
+	{
+		Credits = SaveObject->Credits;
+	}
 }
 
 // void ASPlayerState::MulticastOnCreditsChanged_Implementation(int32 NewCredits, int32 Delta)

@@ -10,6 +10,7 @@
 class UEnvQuery;
 class UEnvQueryInstanceBlueprintWrapper;
 class UCurveFloat;
+class USSaveGame;
 
 /**
  * 
@@ -22,12 +23,22 @@ class MYACTIONROGUELIKE_API ASGameModeBase : public AGameModeBase
 public:
 	ASGameModeBase();
 
+	// InitGame is called before any other function.
+	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+
 	virtual void StartPlay() override;
+
+	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 
 	virtual void OnActorKilled(AActor* VictimActor, AActor* Killer);
 	
 	UFUNCTION(Exec)
 	void KillAll();
+
+	UFUNCTION(BlueprintCallable, Category="SaveGame")
+	void WriteSaveGame();
+
+	void LoadSaveGame();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="AI")
@@ -50,6 +61,11 @@ protected:
 	int32 MaxNumberOfPowerUps;
 	UPROPERTY(EditDefaultsOnly, Category="Power Ups")
 	float PowerUpSpawnDistance;
+
+	// SaveGame
+	FString SlotName;
+	UPROPERTY()
+	USSaveGame* CurrentSaveGame;
 
 	UFUNCTION()
 	void SpawnBotTimerElapsed();
