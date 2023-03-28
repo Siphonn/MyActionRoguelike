@@ -26,7 +26,6 @@ protected:
 
 	UFUNCTION()
 	void ShowPowerUp();
-
 	void HideAndCooldownPowerUp();
 	void SetPowerUpState(bool bNewIsActive);
 
@@ -36,9 +35,9 @@ protected:
 	UStaticMeshComponent* MeshComp;
 
 	// For Networking
-	UPROPERTY(ReplicatedUsing="OnRep_PowerUpUsed", BlueprintReadOnly)
-	bool bPowerUpUsed;
+	UPROPERTY(ReplicatedUsing="OnRep_IsActive")
+	bool bIsActive;
 
 	UFUNCTION()
-	void OnRep_PowerUpUsed();
+	void OnRep_IsActive();
 };

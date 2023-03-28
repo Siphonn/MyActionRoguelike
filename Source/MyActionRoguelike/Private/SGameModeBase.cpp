@@ -58,13 +58,14 @@ void ASGameModeBase::StartPlay()
 
 void ASGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
 {
-	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
-
+	// Called before Super:: so we set variables before 'BeginPlayingState' is called in PlayerController (where we instantiate Main_UI)
 	ASPlayerState* PS = NewPlayer->GetPlayerState<ASPlayerState>();
 	if (PS)
 	{
 		PS->LoadPlayerState(CurrentSaveGame);
 	}
+
+	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
 }
 
 void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
@@ -257,7 +258,7 @@ void ASGameModeBase::WriteSaveGame()
 
 		// Pass the array to fill with data from the Actor
 		FMemoryWriter MemWriter(ActorData.ByteData);
-		
+
 		FObjectAndNameAsStringProxyArchive Ar(MemWriter, true);
 		// Find only variables with UPROPERTY(SaveGame)
 		Ar.ArIsSaveGame = true;
@@ -300,14 +301,14 @@ void ASGameModeBase::LoadSaveGame()
 					Actor->SetActorTransform(ActorData.Transform);
 
 					FMemoryReader MemReader(ActorData.ByteData);
-		
+
 					FObjectAndNameAsStringProxyArchive Ar(MemReader, true);
 					Ar.ArIsSaveGame = true;
 					// Converts binary array back into actor's variables
 					Actor->Serialize(Ar);
 
 					ISGameplayInterface::Execute_OnActorLoaded(Actor);
-					
+
 					break;
 				}
 			}

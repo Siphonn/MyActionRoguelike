@@ -17,6 +17,7 @@ ASPowerUpBase::ASPowerUpBase()
 	MeshComp->SetupAttachment(RootComponent);
 
 	RespawnTime = 10.0f;
+	bIsActive = true;
 
 	SetReplicates(true);
 }
@@ -24,10 +25,6 @@ ASPowerUpBase::ASPowerUpBase()
 void ASPowerUpBase::Interact_Implementation(APawn* InstigatorPawn)
 {
 	/// Logic in derived classes...
-	
-	bPowerUpUsed = !bPowerUpUsed;
-	// Run on server
-	OnRep_PowerUpUsed();
 }
 
 void ASPowerUpBase::ShowPowerUp()
@@ -44,25 +41,20 @@ void ASPowerUpBase::HideAndCooldownPowerUp()
 
 void ASPowerUpBase::SetPowerUpState(bool bNewIsActive)
 {
-	SetActorEnableCollision(bNewIsActive);
-
-	/// Set visibilty on root and all children
-	RootComponent->SetVisibility(bNewIsActive, true);
+	bIsActive = bNewIsActive;
+	OnRep_IsActive();
 }
 
-void ASPowerUpBase::OnRep_PowerUpUsed()
+void ASPowerUpBase::OnRep_IsActive()
 {
-	// Apply PowerUp effect
-	// Hide and Cooldown power-up
-
-	// *NOTE: May only need to run Hide and Cooldown power-up 
-	
-	HideAndCooldownPowerUp();
+	SetActorEnableCollision(bIsActive);
+	/// Set visibilty on root and all children
+	RootComponent->SetVisibility(bIsActive, true);
 }
 
 void ASPowerUpBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(ASPowerUpBase, bPowerUpUsed);
+	DOREPLIFETIME(ASPowerUpBase, bIsActive);
 }

@@ -20,9 +20,11 @@ protected:
 	int32 Credits;
 
 	// Function run when 'credits' value is updated on "Client"
+	// OnRep_ can use a parameter containing the 'old value' of the variables it is bound to. Very useful in this case to figure out the 'delta'.
 	UFUNCTION()
 	void OnRep_Credits(int32 OldCredits);
 
+	// Downside of using a multicast is that is sends more data over the net, since it's an RPC with two parameters. OnRep_ is "free" since Credits is already being replicated anyway. 
 	// UFUNCTION(NetMulticast, Reliable)
 	// void MulticastOnCreditsChanged(int32 NewCredits, int32 Delta);
 

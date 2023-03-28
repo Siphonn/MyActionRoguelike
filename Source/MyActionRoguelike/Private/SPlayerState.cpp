@@ -52,7 +52,9 @@ void ASPlayerState::LoadPlayerState_Implementation(USSaveGame* SaveObject)
 {
 	if (SaveObject)
 	{
-		Credits = SaveObject->Credits;
+		//Credits = SaveObject->Credits;
+		// Make sure to trigger credits updated event
+		AddCredit(SaveObject->Credits);
 	}
 }
 
@@ -64,7 +66,7 @@ void ASPlayerState::LoadPlayerState_Implementation(USSaveGame* SaveObject)
 void ASPlayerState::OnRep_Credits(int32 OldCredits)
 {
 	OnCreditsUpdated.Broadcast(this, Credits, Credits - OldCredits);
-	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, TEXT("OnRep_Credits function is run."));
+	//GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, TEXT("OnRep_Credits function is run."));
 }
 
 void ASPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

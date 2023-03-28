@@ -50,9 +50,9 @@ protected:
 
 	// MaxHealth, Stamina, Strength
 
-	UFUNCTION(NetMulticast, Reliable) // TODO: mark as unreliable once we've moved the 'state' out of scharacter 
+	UFUNCTION(NetMulticast, Reliable) // TODO: mark as unreliable once we've moved the 'state' out of scharacter (eg, once it's cosmetic only)
 	void MulticastHealthChanged(AActor* InstigatorActor, float NewHealth, float Delta);
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, Unreliable) // Used for cosmetic changes only
 	void MulticastRageChanged(AActor* InstigatorActor, float NewRage, float Delta);
 
 public:

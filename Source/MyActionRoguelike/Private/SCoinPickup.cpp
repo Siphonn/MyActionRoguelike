@@ -16,7 +16,6 @@ void ASCoinPickup::Interact_Implementation(APawn* InstigatorPawn)
 	if (ASPlayerState* PlayerState = InstigatorPawn->GetPlayerState<ASPlayerState>())
 	{
 		PlayerState->AddCredit(CreditAmount);
-		//HideAndCooldownPowerUp();
-		Super::Interact_Implementation(InstigatorPawn);
+		HideAndCooldownPowerUp();
 	}
 }
