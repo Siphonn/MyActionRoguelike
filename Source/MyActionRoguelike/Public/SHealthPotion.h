@@ -16,7 +16,9 @@ class MYACTIONROGUELIKE_API ASHealthPotion : public ASPowerUpBase
 public:
 	ASHealthPotion();
 
-	void Interact_Implementation(APawn* InstigatorPawn) override;
+	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
+
+	virtual FText GetInteractText_Implementation(APawn* InstigatorPawn) override;
 
 protected:
 	UPROPERTY(EditAnywhere, Category="Health")

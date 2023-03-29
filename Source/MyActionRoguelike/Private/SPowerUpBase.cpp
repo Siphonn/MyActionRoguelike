@@ -27,6 +27,12 @@ void ASPowerUpBase::Interact_Implementation(APawn* InstigatorPawn)
 	/// Logic in derived classes...
 }
 
+FText ASPowerUpBase::GetInteractText_Implementation(APawn* InstigatorPawn)
+{
+	//return ISGameplayInterface::GetInteractText_Implementation(InstigatorPawn);
+	return FText::GetEmpty();
+}
+
 void ASPowerUpBase::ShowPowerUp()
 {
 	SetPowerUpState(true);
