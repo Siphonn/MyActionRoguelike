@@ -38,7 +38,7 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 			Explode();
 
 			//Burning Effect
-			if (ActionComp && ensure(BurningActionClass) && HasAuthority()) // && !ActionComp->ActiveGameplayTags.HasTag(BurningActionClass)
+			if (ActionComp && BurningActionClass && HasAuthority()) // && !ActionComp->ActiveGameplayTags.HasTag(BurningActionClass) ///  && ensure(BurningActionClass)
 			{
 				ActionComp->AddAction(GetInstigator(), BurningActionClass);
 			}

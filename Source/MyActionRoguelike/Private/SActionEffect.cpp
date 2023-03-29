@@ -29,6 +29,8 @@ void USActionEffect::StartAction_Implementation(AActor* Instigator)
 
 		GetWorld()->GetTimerManager().SetTimer(PeriodHandle, Delegate, Period, true);
 	}
+
+	TimeStarted = GetWorld()->GetTimeSeconds();
 }
 
 void USActionEffect::StopAction_Implementation(AActor* Instigator)
@@ -48,6 +50,12 @@ void USActionEffect::StopAction_Implementation(AActor* Instigator)
 	{
 		ActionComponent->RemoveAction(this);
 	}
+}
+
+float USActionEffect::GetTimeRemaining() const
+{
+	float EndTime = TimeStarted + Duration;
+	return EndTime - GetWorld()->TimeSeconds;
 }
 
 

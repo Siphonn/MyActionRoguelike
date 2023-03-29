@@ -22,6 +22,10 @@ void USAction::StartAction_Implementation(AActor* Instigator)
 
 	RepData.bIsRunning = true;
 	RepData.Instigator = Instigator;
+
+	TimeStarted = GetWorld()->TimeSeconds;
+
+	Comp->OnActionStarted.Broadcast(Comp, this);
 }
 
 void USAction::StopAction_Implementation(AActor* Instigator)
@@ -36,6 +40,8 @@ void USAction::StopAction_Implementation(AActor* Instigator)
 
 	RepData.bIsRunning = false;
 	RepData.Instigator = Instigator;
+
+	Comp->OnActionStopped.Broadcast(Comp, this);
 }
 
 bool USAction::CanStart_Implementation(AActor* Instigator)

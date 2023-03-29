@@ -7,6 +7,7 @@
 #include "UObject/NoExportTypes.h"
 #include "SAction.generated.h"
 
+class UTexture2D;
 class USActionComponent;
 class UWorld;
 
@@ -54,15 +55,20 @@ public:
 	}
 
 protected:
+	UPROPERTY(Replicated)
+	USActionComponent* ActionComp;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="UI")
+	UTexture2D* Icon;
+
+	float TimeStarted;
+	
 	/* Tags added to owning actor when activated, removed when action stops */
 	UPROPERTY(EditDefaultsOnly, Category="Tags")
 	FGameplayTagContainer GrantsTags;
 	/* Action can only start if OwningActor has none of these Tags applied */
 	UPROPERTY(EditDefaultsOnly, Category="Tags")
 	FGameplayTagContainer BlockedTags;
-
-	UPROPERTY(Replicated)
-	USActionComponent* ActionComp;
 
 	UPROPERTY(ReplicatedUsing="OnRep_RepData")
 	FActionRepData RepData;
