@@ -23,7 +23,11 @@ void USAction::StartAction_Implementation(AActor* Instigator)
 	RepData.bIsRunning = true;
 	RepData.Instigator = Instigator;
 
-	TimeStarted = GetWorld()->TimeSeconds;
+	// Is Server?
+	if (GetOwningComponent()->GetOwnerRole() == ROLE_Authority)
+	{
+		TimeStarted = GetWorld()->TimeSeconds;
+	}
 
 	Comp->OnActionStarted.Broadcast(Comp, this);
 }
@@ -90,7 +94,7 @@ USActionComponent* USAction::GetOwningComponent() const
 {
 	// AActor* Actor = Cast<AActor>(GetOuter());
 	// return Actor->GetComponentByClass(USActionComponent::StaticClass());
-	
+
 	//return Cast<USActionComponent>(GetOuter());
 
 	return ActionComp;
@@ -101,5 +105,6 @@ void USAction::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetime
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(USAction, RepData);
+	DOREPLIFETIME(USAction, TimeStarted);
 	DOREPLIFETIME(USAction, ActionComp);
 }
