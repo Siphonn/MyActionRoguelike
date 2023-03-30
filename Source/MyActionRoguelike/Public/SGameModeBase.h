@@ -31,7 +31,8 @@ public:
 	}
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	USMonsterData* MonsterData;
+	FPrimaryAssetId MonsterId;
+	//USMonsterData* MonsterData;
 	//TSubclassOf<AActor> MonsterClass;
 
 	/* Relative chance to pick this monster */
@@ -109,6 +110,8 @@ protected:
 	void SpawnBotTimerElapsed();
 	UFUNCTION()
 	void OnSpawnBotQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
+	UFUNCTION()
+	void OnMonsterLoaded(FPrimaryAssetId LoadedId, FVector SpawnLocation);
 	UFUNCTION()
 	void OnSpawnPowerUpQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 	UFUNCTION()
