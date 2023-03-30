@@ -6,15 +6,19 @@
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "SActionComponent.h"
 #include "SAttributeComponent.h"
-#include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 #include "SCharacter.h"
+#include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 #include "SGameplayInterface.h"
+#include "SMonsterData.h"
 #include "SPlayerState.h"
 #include "SSaveGame.h"
+#include "../MyActionRoguelike.h"
 
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true, TEXT("Enable spawning of bots using timer."), ECVF_Cheat);
+static TAutoConsoleVariable<bool> CVarSpawnBotLocations(TEXT("su.SpawnBotsLocations"), false, TEXT("Show bots original spawn location"), ECVF_Cheat);
 
 
 ASGameModeBase::ASGameModeBase()
@@ -164,12 +168,42 @@ void ASGameModeBase::OnSpawnBotQueryCompleted(UEnvQueryInstanceBlueprintWrapper*
 	}
 
 	TArray<FVector> Locations = QueryInstance->GetResultsAsLocations();
-	if (Locations.Num() > 0)
+	if (Locations.IsValidIndex(0))
 	{
-		GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator::ZeroRotator);
+		// Select spawned enemy from data table
+		if (MonsterTable)
+		{
+			TArray<FMonsterInfoRow*> Rows;
+			MonsterTable->GetAllRows("", Rows);
 
-		// Track all the used spawn locations
-		DrawDebugSphere(GetWorld(), Locations[0], 50.0f, 20, FColor::Blue, false, 60.0f);
+			// Get Random Enemy
+			int32 RandomIndex = FMath::RandRange(0, Rows.Num() - 1);
+			FMonsterInfoRow* SelectedRow = Rows[RandomIndex];
+
+			//GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator::ZeroRotator);
+			AActor* NewBot = GetWorld()->SpawnActor<AActor>(SelectedRow->MonsterData->MonsterClass, Locations[0], FRotator::ZeroRotator);
+			if (NewBot)
+			{
+				LogToScreen(this, FString::Printf(TEXT("Spawned enemy: %s (%s)"), *GetNameSafe(NewBot), *GetNameSafe(SelectedRow->MonsterData)));
+
+				// Grant special actions, buff, etc.
+				USActionComponent* ActionComp = Cast<USActionComponent>(NewBot->GetComponentByClass(USActionComponent::StaticClass()));
+				if (ActionComp)
+				{
+					for (TSubclassOf<USAction> ActionClass : SelectedRow->MonsterData->Actions)
+					{
+						ActionComp->AddAction(NewBot, ActionClass);
+					}
+				}
+			}
+		}
+		
+		// Console variable to track all the used spawn locations
+		if (CVarSpawnBotLocations.GetValueOnGameThread())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Bot spawning location shown via cvar 'CVarSapwnBotsLocations'."));
+			DrawDebugSphere(GetWorld(), Locations[0], 50.0f, 20, FColor::Blue, false, 60.0f);
+		}
 	}
 }
 

@@ -7,6 +7,7 @@
 #include "SAction.h"
 #include "../MyActionRoguelike.h"
 
+static TAutoConsoleVariable<bool> CVarActiveActionData(TEXT("su.ActiveActionData"), false,TEXT("Show current active Action in the ActionComponent and there active/inactive state."), ECVF_Cheat);
 
 USActionComponent::USActionComponent()
 {
@@ -37,13 +38,16 @@ void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	// GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, DebugMessage);
 
 	// Draw All Actions
-	for (USAction* Action : Actions)
+	if (CVarActiveActionData.GetValueOnGameThread())
 	{
-		FColor TextColour = Action->IsRunning() ? FColor::Blue : FColor::White;
+		for (USAction* Action : Actions)
+		{
+			FColor TextColour = Action->IsRunning() ? FColor::Blue : FColor::White;
 
-		FString ActionMsg = FString::Printf(TEXT("[%s] Action is: %s"), *GetNameSafe(GetOwner()), *GetNameSafe(Action));
+			FString ActionMsg = FString::Printf(TEXT("[%s] Action is: %s"), *GetNameSafe(GetOwner()), *GetNameSafe(Action));
 
-		LogToScreen(this, ActionMsg, TextColour, 0.0f);
+			LogToScreen(this, ActionMsg, TextColour, 0.0f);
+		}
 	}
 }
 
@@ -123,7 +127,7 @@ bool USActionComponent::StopActionByName(AActor* Instigator, FName ActionName)
 					// Start Action on Server
 					ServerStopAction(Instigator, ActionName);
 				}
-				
+
 				Action->StopAction(Instigator);
 				return true;
 			}

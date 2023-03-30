@@ -3,14 +3,49 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/DataTable.h"
 #include "EnvironmentQuery/EnvQueryTypes.h"
 #include "GameFramework/GameModeBase.h"
 #include "SGameModeBase.generated.h"
 
+class UCurveFloat;
+class UDataTable;
 class UEnvQuery;
 class UEnvQueryInstanceBlueprintWrapper;
-class UCurveFloat;
+class USMonsterData;
 class USSaveGame;
+
+
+/* DataTable type for spawning monsters in game mode */
+USTRUCT(BlueprintType)
+struct FMonsterInfoRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+	FMonsterInfoRow()
+	{
+		Weight = 1.0f;
+		SpawnCost = 5.0f;
+		KillReward = 20.0f;
+	}
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	USMonsterData* MonsterData;
+	//TSubclassOf<AActor> MonsterClass;
+
+	/* Relative chance to pick this monster */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float Weight;
+
+	/* Points required by gamemode to spawn this unit */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float SpawnCost;
+
+	/* Amount of credits awarded for killing this unit */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float KillReward;
+};
 
 /**
  * 
@@ -31,7 +66,7 @@ public:
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 
 	virtual void OnActorKilled(AActor* VictimActor, AActor* Killer);
-	
+
 	UFUNCTION(Exec)
 	void KillAll();
 
@@ -41,8 +76,11 @@ public:
 	void LoadSaveGame();
 
 protected:
+	/* All available monsters */
 	UPROPERTY(EditDefaultsOnly, Category="AI")
-	TSubclassOf<AActor> MinionClass;
+	UDataTable* MonsterTable;
+	// UPROPERTY(EditDefaultsOnly, Category="AI")
+	// TSubclassOf<AActor> MinionClass;
 	UPROPERTY(EditDefaultsOnly, Category="AI")
 	UEnvQuery* SpawnBotQuery;
 	UPROPERTY(EditDefaultsOnly, Category="AI")
@@ -53,7 +91,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="AI")
 	int32 CreditOnKill;
 
-	UPROPERTY(EditDefaultsOnly,Category="Power Ups")
+	UPROPERTY(EditDefaultsOnly, Category="Power Ups")
 	TArray<TSubclassOf<AActor>> PowerUps;
 	UPROPERTY(EditDefaultsOnly, Category="Power Ups")
 	UEnvQuery* PowerUpQuery;

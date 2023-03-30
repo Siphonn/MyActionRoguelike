@@ -59,8 +59,8 @@ protected:
 	USActionComponent* ActionComp;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="UI")
-	UTexture2D* Icon;
-	
+	TSoftObjectPtr<UTexture2D> Icon;
+
 	/* Tags added to owning actor when activated, removed when action stops */
 	UPROPERTY(EditDefaultsOnly, Category="Tags")
 	FGameplayTagContainer GrantsTags;
