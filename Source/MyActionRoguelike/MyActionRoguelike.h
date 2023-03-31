@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 
+DECLARE_STATS_GROUP(TEXT("STANFORD_Game"), STATGROUP_STANFORD, STATCAT_Advanced);
+
 static void LogToScreen(UObject* WorldContext, FString Msg, FColor Colour = FColor::White, float Duration = 5.0f)
 {
 	if (!ensure(WorldContext)) { return; }

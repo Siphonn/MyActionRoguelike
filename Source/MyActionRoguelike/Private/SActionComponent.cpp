@@ -9,6 +9,8 @@
 
 static TAutoConsoleVariable<bool> CVarActiveActionData(TEXT("su.ActiveActionData"), false,TEXT("Show current active Action in the ActionComponent and there active/inactive state."), ECVF_Cheat);
 
+DECLARE_CYCLE_STAT(TEXT("StartActionByName"), STAT_StartActionByName, STATGROUP_STANFORD);
+
 USActionComponent::USActionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -28,6 +30,21 @@ void USActionComponent::BeginPlay()
 			AddAction(GetOwner(), ActionClass);
 		}
 	}
+}
+
+void USActionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	// Stop all
+	TArray<USAction*> ActionCopy = Actions;
+	for(USAction* Action:ActionCopy)
+	{
+		if(Action&& Action->IsRunning())
+		{
+			Action->StopAction(GetOwner());
+		}	
+	}
+	
+	Super::EndPlay(EndPlayReason);
 }
 
 void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -87,6 +104,8 @@ void USActionComponent::RemoveAction(USAction* ActionToRemove)
 
 bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 {
+	SCOPE_CYCLE_COUNTER(STAT_StartActionByName);
+
 	for (USAction* Action : Actions)
 	{
 		if (Action && Action->ActionName == ActionName)
@@ -104,6 +123,9 @@ bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 				// Start Action on Server
 				ServerStartAction(Instigator, ActionName);
 			}
+
+			// Bookmark for Unreal Insights
+			TRACE_BOOKMARK(TEXT("Start Action::%s"), *GetNameSafe(Action));
 
 			// Start Action locally 
 			Action->StartAction(Instigator);
