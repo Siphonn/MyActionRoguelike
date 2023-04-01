@@ -38,6 +38,13 @@ void ASGameModeBase::InitGame(const FString& MapName, const FString& Options, FS
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
 
+	// Loading selected save file
+	FString SelectedSaveSlot = UGameplayStatics::ParseOption(Options, "SaveGame");
+	if (SelectedSaveSlot.Len() > 0)
+	{
+		SlotName = SelectedSaveSlot;
+	}
+
 	LoadSaveGame();
 }
 
@@ -186,7 +193,7 @@ void ASGameModeBase::OnSpawnBotQueryCompleted(UEnvQueryInstanceBlueprintWrapper*
 			if (Manager)
 			{
 				LogToScreen(this, "Loading monster...", FColor::Green);
-				
+
 				TArray<FName> Bundles;
 				FStreamableDelegate Delegate = FStreamableDelegate::CreateUObject(this, &ASGameModeBase::OnMonsterLoaded, SelectedRow->MonsterId, Locations[0]);
 				Manager->LoadPrimaryAsset(SelectedRow->MonsterId, Bundles, Delegate);
@@ -206,7 +213,7 @@ void ASGameModeBase::OnSpawnBotQueryCompleted(UEnvQueryInstanceBlueprintWrapper*
 void ASGameModeBase::OnMonsterLoaded(FPrimaryAssetId LoadedId, FVector SpawnLocation)
 {
 	LogToScreen(this, "Finished loading.", FColor::Green);
-	
+
 	UAssetManager* Manager = UAssetManager::GetIfValid();
 	if (Manager)
 	{

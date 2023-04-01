@@ -19,9 +19,12 @@ ASAICharacter::ASAICharacter()
 	PawnSensingComp = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComp");
 	AttributeComp = CreateDefaultSubobject<USAttributeComponent>("AttributeComp");
 	ActionComp = CreateDefaultSubobject<USActionComponent>("ActionComp");
+	// Ensures we receive a controller spawned in the level by our gamemode
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+	// Disabled on capsule to let projectiles pass through capsule and hit mesh instead
+	//GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+	// Enabled on mesh to react to incoming projectiles
 	GetMesh()->SetGenerateOverlapEvents(true);
 
 	TimeToHitParam = "TimeToHit";
